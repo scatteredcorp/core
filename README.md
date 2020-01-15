@@ -1,5 +1,7 @@
 # Core
 
+![](https://avatars2.githubusercontent.com/u/59290256?s=150)
+
 ## Get started
 * `git clone https://github.com/scatteredcorp/core.git`
 * `cd core`
