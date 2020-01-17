@@ -12,11 +12,11 @@ namespace BGC {
             placement.Add(0, 10);
             placement.Add(2, 55);
 
-            var contract = new Contracts.StartContract(placement, 50, placement, placement, new byte[20], new byte[20]);
+            var contract = new Contracts.ThrowContract(placement, 50, new byte[32], 5, 50);
             
             Console.WriteLine(string.Join(" ", contract.Serialize()));
             
-            StartContract c = Contracts.ContractHelper.DeserializeStartContract(contract.Serialize());
+            ThrowContract c = Contracts.ContractHelper.DeserializeThrowContract(contract.Serialize());
             
             Console.WriteLine(string.Join(" ", c.Serialize()));
             

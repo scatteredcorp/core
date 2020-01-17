@@ -96,9 +96,70 @@ namespace BGC.Contracts {
             Array.Copy(data, offset, signatureTwo, 0, 64);
 
             byte[] playerTwoSignature = signatureTwo;
+
+            StartContract contract = new StartContract(fee, nonce, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo);
+
+            contract.PlayerOneSignature = playerOneSignature;
+            contract.PlayerTwoSignature = playerTwoSignature;
+
+            return contract;
+
+        }
+
+        public static ThrowContract DeserializeThrowContract(byte[] data) {
+
+            // Contract version
+            byte version = data[0];
             
-            return new StartContract(fee, nonce, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo);
+            // Contract type
+            byte contractType = data[1];
+            byte numMarbles = data[2];
+            uint offset = 3;
+
+            Placement fee = new Placement();
+            Placement playerOnePlacement = new Placement();
+            Placement playerTwoPlacement = new Placement();
+
+            // Fee
+            for (uint i = 0; i < numMarbles; i++) {
+                byte type = data[offset];
+                offset++;
+
+                byte[] quantityBytes = new byte[8];
+                Array.Copy(data, offset, quantityBytes, 0, 8);
+                ulong quantity = BitConverter.ToUInt64(quantityBytes);
             
+                fee.Add(type, quantity);
+                offset += 8;
+            }
+
+            byte x = data[offset];
+            offset++;
+
+            byte z = data[offset];
+            offset++;
+            
+            byte[] gameHash = new byte[32];
+            Array.Copy(data, offset, gameHash, 0, 32);
+            offset += 32;
+            
+            // Nonce
+            byte[] nonceBytes = new byte[8];
+            Array.Copy(data, offset, nonceBytes, 0, 8);
+            ulong nonce = BitConverter.ToUInt64(nonceBytes);
+
+            offset += 8;
+            
+            // Signature
+            byte[] signature = new byte[64];
+            Array.Copy(data, offset, signature, 0, 64);
+
+            byte[] playerTwoSignature = signature;
+            
+            ThrowContract contract = new ThrowContract(fee, nonce, gameHash, x, z);
+            contract.Signature = signature;
+            
+            return contract;
         }
     }
     
