@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Xml;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
@@ -29,8 +30,8 @@ namespace BGC.Contracts {
             PlayerOnePubKeyHash = playerOnePubKeyHash;
             PlayerTwoPubKeyHash = playerTwoPubKeyHash;
             
-            PlayerOneSignature = new byte[32];
-            PlayerTwoSignature = new byte[32];
+            PlayerOneSignature = new byte[64];
+            PlayerTwoSignature = new byte[64];
         }
 
         public byte[] Serialize() {
@@ -40,11 +41,11 @@ namespace BGC.Contracts {
             
             serialized.AddRange(Fee.Serialize());
             
-            serialized.AddRange(PlayerOnePubKeyHash);
-            serialized.AddRange(PlayerTwoPubKeyHash);
-            
             serialized.AddRange(PlayerOnePlacement.Serialize());
             serialized.AddRange(PlayerTwoPlacement.Serialize());
+            
+            serialized.AddRange(PlayerOnePubKeyHash);
+            serialized.AddRange(PlayerTwoPubKeyHash);
             
             serialized.AddRange(BitConverter.GetBytes(Nonce));
             
@@ -58,4 +59,5 @@ namespace BGC.Contracts {
             throw new NotImplementedException();
         }
     }
+
 }

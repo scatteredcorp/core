@@ -1,7 +1,6 @@
 ﻿namespace BGC.Wallet
 {
-    public class Wallet
-    {
+    public class Wallet {
         
     }
 }
