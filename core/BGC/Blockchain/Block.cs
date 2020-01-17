@@ -5,7 +5,7 @@ namespace BGC.Blockchain {
     public struct Block {
         public byte[] Hash;
         public byte[] PreviousHash;
-        public Contract Contracts;
+        public IContract[] Contracts;
         public ulong Height;
         public ulong Nonce;
         public uint Timestamp;
