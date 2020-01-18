@@ -4,9 +4,10 @@ using System.Collections.Generic;
 namespace BGC.Contracts {
     
     
-    public class ThrowContract : BaseContract {
+    public class ThrowContract : BaseContract, IContract {
         private new const byte Version = 1;
-        
+        private new const byte Type = 1;
+
         public byte[] LastThrowHash;
         public byte X;
         public byte Z;
@@ -24,7 +25,7 @@ namespace BGC.Contracts {
         public byte[] Serialize() {
             List<byte> serialized = new List<byte>();
             serialized.Add(Version);
-            serialized.Add(1); // contract type is 1
+            serialized.Add(Type);
             
             serialized.AddRange(Fee.Serialize());
             serialized.Add(X);

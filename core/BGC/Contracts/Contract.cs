@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
 
     public interface IContract {
         byte[] Serialize();
-        bool Sign();
+        bool Sign(byte[] privateKey);
     }
 
     public static class ContractHelper {
@@ -97,11 +98,11 @@ namespace BGC.Contracts {
 
             byte[] playerTwoSignature = signatureTwo;
 
-            StartContract contract = new StartContract(fee, nonce, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo);
-
-            contract.PlayerOneSignature = playerOneSignature;
-            contract.PlayerTwoSignature = playerTwoSignature;
-
+            StartContract contract = new StartContract(fee, nonce, playerOnePlacement, playerTwoPlacement, pKeyHashOne,
+                pKeyHashTwo) {
+                Type = contractType, PlayerOneSignature = playerOneSignature, PlayerTwoSignature = playerTwoSignature
+            };
+            
             return contract;
 
         }
@@ -158,6 +159,7 @@ namespace BGC.Contracts {
             
             ThrowContract contract = new ThrowContract(fee, nonce, gameHash, x, z);
             contract.Signature = signature;
+            contract.Type = contractType;
             
             return contract;
         }

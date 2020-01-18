@@ -20,7 +20,8 @@ namespace BGC {
             
             Console.WriteLine(string.Join(" ", c.Serialize()));
             
-            
+            Blockchain.Blockchain blockchain = new Blockchain.Blockchain();
+            blockchain.Init(new byte[20]);
         }
     }
 }

@@ -6,10 +6,10 @@ using BGC.Marbles;
 
 namespace BGC.Contracts {
 
-    public class StartContract : BaseContract, IContract {
+    public class TransactionContract : BaseContract, IContract {
         private new const byte Version = 1;
-        private new const byte Type = 0;
-
+        private new const byte Type = 2;
+        
         public Placement PlayerOnePlacement;
         public Placement PlayerTwoPlacement;
 
@@ -19,7 +19,7 @@ namespace BGC.Contracts {
         public byte[] PlayerOneSignature;
         public byte[] PlayerTwoSignature;
 
-        public StartContract(Placement fee, ulong nonce, Placement playerOnePlacement, Placement playerTwoPlacement, byte[] playerOnePubKeyHash,
+        public TransactionContract(Placement fee, ulong nonce, Placement playerOnePlacement, Placement playerTwoPlacement, byte[] playerOnePubKeyHash,
             byte[] playerTwoPubKeyHash) : base(fee, nonce) {
             PlayerOnePlacement = playerOnePlacement;
             PlayerTwoPlacement = playerTwoPlacement;
@@ -58,6 +58,20 @@ namespace BGC.Contracts {
 
         public bool Sign(byte[] privateKey) {
             throw new NotImplementedException();
+        }
+    }
+
+    public static class TransactionHelper {
+        public static TransactionContract CoinbaseTransaction(byte[] minerAddress, uint chainHeight) {
+            Placement reward = new Placement();
+            Placement empty = new Placement();
+            // TODO : change with actual values based on chain height and marbles' rarity
+            reward.Add(0, 1000);
+            reward.Add(1, 500);
+            reward.Add(2, 100);
+            
+            TransactionContract coinbase = new TransactionContract(empty, 0, empty, reward, new byte[20], minerAddress);
+            return coinbase;
         }
     }
 
