@@ -21,6 +21,10 @@ namespace BGC.Contracts {
 
         public StartContract(Placement fee, ulong nonce, Placement playerOnePlacement, Placement playerTwoPlacement, byte[] playerOnePubKeyHash,
             byte[] playerTwoPubKeyHash) : base(fee, nonce) {
+
+            base.Version = Version;
+            base.Type = Type;
+            
             PlayerOnePlacement = playerOnePlacement;
             PlayerTwoPlacement = playerTwoPlacement;
 

@@ -15,6 +15,10 @@ namespace BGC.Contracts {
 
 
         public ThrowContract(Placement fee, ulong nonce, byte[] lastThrowHash, byte x, byte z) : base(fee, nonce) {
+            
+            base.Version = Version;
+            base.Type = Type;
+            
             LastThrowHash = lastThrowHash;
             X = x;
             Z = z;

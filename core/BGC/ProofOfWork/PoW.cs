@@ -7,7 +7,7 @@ using BGC.Blockchain;
 
 namespace BGC.ProofOfWork {
     public class PoW {
-        public const int Difficulty = 12;
+        public const int Difficulty = 10;
 
         public Block Block;
         public BigInteger Target = 1;
@@ -22,7 +22,7 @@ namespace BGC.ProofOfWork {
             data.AddRange(Block.BlockHeader.PreviousHash);
             data.AddRange(Block.HashContracts());
             data.AddRange(BitConverter.GetBytes(nonce));
-            data.AddRange(BitConverter.GetBytes(Difficulty));
+            data.AddRange(Target.ToByteArray());
 
             return data.ToArray();
         }
@@ -45,14 +45,12 @@ namespace BGC.ProofOfWork {
 
                 // If block hash is below target, it is valid
                 if (intHash.CompareTo(Target) == -1) {
-                    Console.WriteLine("ok");
                     break;
                 }
 
                 // Compute a different hash by changing the nonce
                 nonce++;
             }
-
             return (nonce, hash);
         }
 
