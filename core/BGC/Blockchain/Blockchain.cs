@@ -5,7 +5,6 @@ using System.Transactions;
 using BGC.Contracts;
 using BGC.ProofOfWork;
 using LevelDB;
-using StackExchange.Redis;
 
 namespace BGC.Blockchain {
     public class Blockchain {
