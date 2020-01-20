@@ -7,9 +7,7 @@ namespace BGC {
     class BGC {
         static void Main(string[] args) {
             Console.WriteLine("BGC - Core");
-            
-            Blockchain.Blockchain blockchain = new Blockchain.Blockchain();
-            blockchain.Init(new byte[20]);
+            CLI.CLI.Run(args);
         }
     }
 }
