@@ -1,5 +1,6 @@
 ﻿using System;
-using BGC.Blockchain;
+using System.Text;
+using BGC.Base58;
 using CommandLine;
 
 namespace BGC.CLI {

@@ -20,7 +20,7 @@ namespace BGC.Blockchain {
             try {
                 Options options = new Options{CreateIfMissing = false};
                 DB = new DB(options, dbLocation);
-            } catch (Exception e) {
+            } catch {
                 Console.WriteLine("Blockchain has not been initialized.");
                 System.Environment.Exit(1);
             }
