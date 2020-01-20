@@ -165,7 +165,7 @@ namespace BGC.Contracts {
         }
     }
     
-    public class BaseContract {
+    public abstract class BaseContract {
         public byte Version;
         public byte Type;
         

@@ -4,41 +4,22 @@ using BGC.Base58;
 using CommandLine;
 
 namespace BGC.CLI {
-    [Verb("init", HelpText = "Initialize blockchain")]
-    class InitOptions {
-        [Option(Group = "init", HelpText="Genesis block reward address")]
-        public string Address { get; set; }
-    }
-    [Verb("createwallet", HelpText = "Create a new wallet")]
-    class CreateWalletOptions {
-    }
-    [Verb("inventory", HelpText = "Display list of owned marbles")]
-    class InventoryOptions {
-    }
     public static class CLI {
         public static void Run(string[] args) {
-            Parser.Default.ParseArguments<InitOptions, CreateWalletOptions, InventoryOptions>(args)
-                .WithParsed<InitOptions>(InitBlockchainCmd)
-                .WithParsed<CreateWalletOptions>(CreateWalletCmd)
-                .WithParsed<InventoryOptions>(GetInventoryCmd);
+            Parser.Default.ParseArguments<
+                    BlockchainCmd.InitOptions, 
+                    WalletCmd.CreateWalletOptions,
+                    WalletCmd.GetWalletOptions,
+                    InventoryCmd.InventoryOptions
+                >(args)
+                // Blockchain related commands
+                .WithParsed<BlockchainCmd.InitOptions>(BlockchainCmd.InitBlockchain)
+                
+                // Wallet related commands
+                .WithParsed<WalletCmd.CreateWalletOptions>(WalletCmd.CreateWallet)
+                .WithParsed<WalletCmd.GetWalletOptions>(WalletCmd.GetWallet)
+                // Inventory related commands
+                .WithParsed<InventoryCmd.InventoryOptions>(InventoryCmd.GetInventory);
         }
-        
-        private static void InitBlockchainCmd(InitOptions opts) {
-            Blockchain.Blockchain blockchain = new Blockchain.Blockchain();
-            Console.WriteLine("Address: " + opts.Address);
-            blockchain.Init(new byte[20]);
-        }
-
-        private static void CreateWalletCmd(CreateWalletOptions opts) {
-            Console.WriteLine("Create a new wallet.");
-            throw new NotImplementedException();
-        }
-
-        private static void GetInventoryCmd(InventoryOptions opts) {
-            throw new NotImplementedException();
-        }
-
     }
-    
-    
 }

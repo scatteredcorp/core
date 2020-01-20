@@ -10,4 +10,8 @@
       <PackageReference Include="LevelDB.Standard" Version="2.1.6.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Contracts.Test" />
+    </ItemGroup>
+
 </Project>
