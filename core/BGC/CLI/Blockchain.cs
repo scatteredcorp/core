@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using BGC.Base58;
 using CommandLine;
-using CommandLine.Text;
 
 namespace BGC.CLI {
 	public static class BlockchainCmd {
