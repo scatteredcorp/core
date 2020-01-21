@@ -7,6 +7,11 @@ namespace BGC.Wallet
         public BigInteger PrivateKey;
         public BigInteger PublicKey;
 
+        public Wallet(BigInteger privateKey, BigInteger publicKey) {
+            PrivateKey = privateKey;
+            PublicKey = publicKey;
+        }
+
         public byte[] Address() {
             // https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
             throw new NotImplementedException();
