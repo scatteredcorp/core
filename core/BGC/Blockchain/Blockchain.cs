@@ -38,7 +38,6 @@ namespace BGC.Blockchain {
             }
 
             TransactionContract coinbase = TransactionHelper.CoinbaseTransaction(rewardAddress, 0);
-            Console.WriteLine(coinbase.Type);
             Block genesisBlock = BlockHelper.Genesis(coinbase);
             
             // Compute block hash

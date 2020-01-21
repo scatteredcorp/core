@@ -67,13 +67,13 @@ namespace BGC.Contracts {
             }
 
             // Player one pubkey hash
-            byte[] pKeyHashOne = new byte[20];
+            byte[] pKeyHashOne = new byte[25];
             Array.Copy(data, offset, pKeyHashOne, 0, 20);
             
             offset += 20;
 
             // Player two pubkey hash
-            byte[] pKeyHashTwo = new byte[20];
+            byte[] pKeyHashTwo = new byte[25];
             Array.Copy(data, offset, pKeyHashTwo, 0, 20);
 
             offset += 20;

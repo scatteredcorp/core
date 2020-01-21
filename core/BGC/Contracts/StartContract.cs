@@ -28,8 +28,8 @@ namespace BGC.Contracts {
             PlayerOnePlacement = playerOnePlacement;
             PlayerTwoPlacement = playerTwoPlacement;
 
-            if (playerOnePubKeyHash.Length != 20 || playerTwoPubKeyHash.Length != 20) {
-                throw new Exception("Public key hash should be 20 bytes.");
+            if (playerOnePubKeyHash.Length != 25 || playerTwoPubKeyHash.Length != 25) {
+                throw new Exception("Public key hash should be 25 bytes.");
             }
             
             PlayerOnePubKeyHash = playerOnePubKeyHash;

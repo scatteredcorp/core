@@ -28,7 +28,7 @@ namespace BGC.Contracts {
             PlayerOnePlacement = playerOnePlacement;
             PlayerTwoPlacement = playerTwoPlacement;
 
-            if (playerOnePubKeyHash.Length != 20 || playerTwoPubKeyHash.Length != 20) {
+            if (playerOnePubKeyHash.Length != 25 || playerTwoPubKeyHash.Length != 25) {
                 throw new Exception("Public key hash should be 20 bytes.");
             }
             
@@ -74,7 +74,7 @@ namespace BGC.Contracts {
             reward.Add(1, 500);
             reward.Add(2, 100);
             
-            TransactionContract coinbase = new TransactionContract(empty, 0, empty, reward, new byte[20], minerAddress);
+            TransactionContract coinbase = new TransactionContract(empty, 0, empty, reward, new byte[25], minerAddress);
             return coinbase;
         }
     }
