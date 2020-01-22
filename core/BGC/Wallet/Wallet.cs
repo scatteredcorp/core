@@ -4,12 +4,15 @@ using System.Numerics;
 namespace BGC.Wallet
 {
     public class Wallet {
-        public BigInteger PrivateKey;
-        public BigInteger PublicKey;
 
-        public Wallet(BigInteger privateKey, BigInteger publicKey) {
+        private const byte Version = 1;
+        
+        public BigInteger PrivateKey;
+        public byte[] PublicKey;
+
+        public Wallet(BigInteger privateKey) {
             PrivateKey = privateKey;
-            PublicKey = publicKey;
+            PublicKey = WalletHelper.ComputePubKey(privateKey);
         }
 
         public byte[] Address() {
@@ -29,7 +32,16 @@ namespace BGC.Wallet
             throw new NotImplementedException();
         }
 
-        private static BigInteger ComputePublicKey() {
+        // Uncompressed public key (X and Y value)
+        // Leading 0x04 byte (uncompressed format)
+        public static byte[] ComputePubKey(BigInteger privateKey) {
+            throw new NotImplementedException();
+        }
+
+        // Compressed public key (only X value, because Y can be derived from X)
+        // Leading 0x02 if Y is even
+        // Leading 0x03 if Y is odd
+        public static byte[] ComputeCompressedPubKey(BigInteger privateKey) {
             throw new NotImplementedException();
         }
         
