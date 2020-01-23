@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Numerics;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using BGC.Base58;
+using Secp256k1Net;
 
 namespace BGC.Wallet
 {
@@ -9,10 +12,10 @@ namespace BGC.Wallet
 
         private const byte Version = 1;
         
-        public BigInteger PrivateKey;
+        public byte[] PrivateKey;
         public byte[] PublicKey;
 
-        public Wallet(BigInteger privateKey) {
+        public Wallet(byte[] privateKey) {
             PrivateKey = privateKey;
             PublicKey = WalletHelper.ComputePubKey(privateKey);
         }
@@ -69,14 +72,27 @@ namespace BGC.Wallet
 
     public static class WalletHelper {
 
-        private static BigInteger GeneratePrivateKey() {
-            throw new NotImplementedException();
+        private static byte[] GeneratePrivateKey() {
+            using (var secp256k1 = new Secp256k1())
+            {
+                byte[] privateKey = new byte[32];
+                RandomNumberGenerator rnd = 
+                    System.Security.Cryptography.RandomNumberGenerator.Create();
+                do { rnd.GetBytes(privateKey); }
+                while (!secp256k1.SecretKeyVerify(privateKey));
+                return privateKey;
+            }
         }
 
         // Uncompressed public key (X and Y value)
         // Leading 0x04 byte (uncompressed format)
-        public static byte[] ComputePubKey(BigInteger privateKey) {
-            throw new NotImplementedException();
+        public static byte[] ComputePubKey(byte[] privateKey) {
+            using (var secp256k1 = new Secp256k1())
+            {
+                var publicKey = new byte[64];
+                secp256k1.PublicKeyCreate(publicKey, privateKey);
+                return publicKey;
+            }
         }
 
         // Compressed public key (only X value, because Y can be derived from X)
