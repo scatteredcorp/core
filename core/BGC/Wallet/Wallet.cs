@@ -12,9 +12,9 @@ namespace BGC.Wallet
     public class Wallet {
 
         private const byte Version = 1;
-        
-        public byte[] PrivateKey;
-        public byte[] PublicKey;
+
+        public byte[] PrivateKey { get; }
+        public byte[] PublicKey { get; }
 
         public Wallet(byte[] privateKey) {
             PrivateKey = privateKey;
@@ -35,25 +35,25 @@ namespace BGC.Wallet
             
 
             // Step 4: Add version byte (0x00)
-            byte[] versionned = new byte[ripemdHash.Length + 2];
-            versionned[0] = 0;
-            versionned[1] = 0;
+            byte[] versioned = new byte[ripemdHash.Length + 2];
+            versioned[0] = 0;
+            versioned[1] = 0;
             for (int i = 0; i < ripemdHash.Length; i++)
             {
-                versionned[i + 2] = ripemdHash[i];
+                versioned[i + 2] = ripemdHash[i];
             }
 
             // Step 5 & 6: SHA256 twice
-            hash = sha526.ComputeHash(versionned);
+            hash = sha526.ComputeHash(versioned);
             hash = sha526.ComputeHash(hash);
 
-            // Step 7 & 8: add trimmed hash at the end of the versionned hash
+            // Step 7 & 8: add trimmed hash at the end of the versioned hash
             byte[] address = new byte[ripemdHash.Length + 6];
             {
                 int i = 0;
-                for (; i < versionned.Length; i++)
+                for (; i < versioned.Length; i++)
                 {
-                    address[i] = versionned[i];
+                    address[i] = versioned[i];
                 }
                 for (int j = 0; j < 4; j++)
                 {
