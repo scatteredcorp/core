@@ -10,7 +10,7 @@ namespace BGC.Tests.Wallet {
         [Fact]
         public void TestComputePubKey() {
 
-            var keys = new[] {
+            (string, string)[] keys = {
                 (
                     "CB186C327B41EF5F775E531B4FF1C2E555F05C41FBB9CD68F4CC6CBBFD4FB8F1",
                     "041CB0D41D458F5D715899FC68B9AD142F983203A22D06F209576F24F89CD5E5A5A5DF6DE9B4475DD479007FFCE41334448899BCA5ACF8547B378E4369B90B3872"
