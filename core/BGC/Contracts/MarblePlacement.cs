@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
-    public class Placement {
+    public sealed class Placement {
         private List<PlacementMarble> marbles = new List<PlacementMarble>();
 
         public void Add(byte type, ulong amount) {

@@ -9,6 +9,12 @@ namespace BGC.Contracts {
         bool Sign(byte[] privateKey);
     }
 
+    public enum ContractType {
+        StartContract,
+        ThrowContract,
+        TransactionContract
+    }
+
     public static class ContractHelper {
         public static StartContract DeserializeStartContract(byte[] data) {
             // Contract version

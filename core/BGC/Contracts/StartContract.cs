@@ -8,7 +8,7 @@ namespace BGC.Contracts {
 
     public class StartContract : BaseContract, IContract {
         private new const byte Version = 1;
-        private new const byte Type = 0;
+        private new const byte Type = (byte) ContractType.StartContract;
 
         public Placement PlayerOnePlacement;
         public Placement PlayerTwoPlacement;

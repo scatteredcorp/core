@@ -6,7 +6,7 @@ namespace BGC.Contracts {
     
     public class ThrowContract : BaseContract, IContract {
         private new const byte Version = 1;
-        private new const byte Type = 1;
+        private new const byte Type = (byte) ContractType.ThrowContract;
 
         public byte[] LastThrowHash;
         public byte X;
