@@ -95,15 +95,9 @@ namespace BGC.Wallet
                 byte[] publicKey = new byte[64];
                 secp256k1.PublicKeyCreate(publicKey, privateKey);
 
-                byte[] standardKey = new byte[65];
-                standardKey[0] = 0x04; // 0x04 is the standard for uncompressed keys
-
-                for (int i = 0; i < 64; i++)
-                {
-                    standardKey[i + 1] = publicKey[i];
-                }
-
-                return standardKey;
+                byte[] serialized = new byte[65];
+                secp256k1.PublicKeySerialize(serialized, publicKey, Flags.SECP256K1_EC_UNCOMPRESSED);
+                return serialized;
             }
         }
 

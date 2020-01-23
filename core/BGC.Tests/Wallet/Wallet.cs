@@ -2,29 +2,40 @@
 using System.Globalization;
 using System.Numerics;
 using System.Security.Cryptography;
-using BGC;
 using Xunit;
 using Wallet = BGC.Wallet;
 
 namespace BGC.Tests.Wallet {
-    public class WalletTest {
+    public class TestWallet {
         [Fact]
-        public void TestFromHex()
-        {
-            string hexData = "CB186C327B41EF5F775E531B4FF1C2E555F05C41FBB9CD68F4CC6CBBFD4FB8F1";
-            byte[] expectedResult = { 0xCB, 0x18, 0x6C, 0x32, 0x7B, 0x41, 0xEF, 0x5F, 0x77, 0x5E, 0x53, 0x1B, 0x4F, 0xF1, 0xC2, 0xE5, 0x55, 0xF0, 0x5C, 0x41, 0xFB, 0xB9, 0xCD, 0x68,
-                0xF4, 0xCC, 0x6C, 0xBB, 0xFD, 0x4F, 0xB8, 0xF1 };
+        public void TestComputePubKey() {
 
-            Assert.Equal(Utils.FromHex(hexData), expectedResult);
-        }
+            var keys = new[] {
+                (
+                    "CB186C327B41EF5F775E531B4FF1C2E555F05C41FBB9CD68F4CC6CBBFD4FB8F1",
+                    "041CB0D41D458F5D715899FC68B9AD142F983203A22D06F209576F24F89CD5E5A5A5DF6DE9B4475DD479007FFCE41334448899BCA5ACF8547B378E4369B90B3872"
+                ),
+                (
+                    "0195ED8967F1565E686BE9B43B7171FE59094E9468B9D4F2FE8429CF490B7FB4",
+                    "04AE94381F932E34A2A45D4E337A89A0B3E665FD2AF3E267179EED7FDF97518229F224BFFD909B79B57BA3B960445D9ECEBBF59AD6EE47D15FBD4AC8626DA5D205"
+                ),
+                (
+                    "72E69EFA1482252D1B189AC74802028D2A7A3DE71BCAA7818DF75ABC3A780CC1",
+                    "042209ECF8266FB766805105ACB52392297F3F32756525CF6DD662F7F45A9DB432F5CB078215D20A99443789FC998B44A670B28CAAEEC36309094460B3A4F6E1A8"
+                ),
+                (
+                    "39ADD5B15FC96E665053D18C034949C6613176AC5081ECCAC6BC11F77133478C",
+                    "04F654401F7E2821DFC1409C0F9B33E130A0A2F647F787C9484885821D602A1F9DAA4ED2F1671CD697BDC889DCA692692E05622B1D20D51F791F884F9006145309"
+                )
+            };
 
-        [Fact]
-        public void TestComputePubKey()
-        {
-            byte[] privateKey = Utils.FromHex("CB186C327B41EF5F775E531B4FF1C2E555F05C41FBB9CD68F4CC6CBBFD4FB8F1");
-            byte[] expectedResult = Utils.FromHex("041CB0D41D458F5D715899FC68B9AD142F983203A22D06F209576F24F89CD5E5A5A5DF6DE9B4475DD479007FFCE41334448899BCA5ACF8547B378E4369B90B3872");
+            foreach ((string priv, string pub) in keys) {
+                byte[] privateKey = Utils.FromHex(priv);
+                byte[] expectedResult = Utils.FromHex(pub);
 
-            Assert.Equal(BGC.Wallet.WalletHelper.ComputePubKey(privateKey), expectedResult);
+                Assert.Equal(BGC.Wallet.WalletHelper.ComputePubKey(privateKey), expectedResult);
+            }
+            
         }
     }
 }
