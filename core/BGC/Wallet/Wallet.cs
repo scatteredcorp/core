@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,6 +73,8 @@ namespace BGC.Wallet
 
     public static class WalletHelper {
 
+        private const string WalletPath = "./wallet.dat";
+
         private static byte[] GeneratePrivateKey() {
             using (var secp256k1 = new Secp256k1())
             {
@@ -106,12 +109,72 @@ namespace BGC.Wallet
             // Generate private key / public key pair and save in wallet.dat
             // Encrypt wallet.dat with encrpytion key
             // Do not create wallet if wallet.dat exists
-            throw new NotImplementedException();
+
+            using (Aes aes = Aes.Create())
+            {
+                // Step 1: Generate a private key
+                byte[] privateKey = GeneratePrivateKey();
+
+                // Step 2: Initialize a wallet with that private key
+                Wallet wallet = new Wallet(privateKey);
+
+                // Step 3: Get aes ready to encrypt the private key
+                aes.Key = encryptionKey;
+                aes.GenerateIV();
+
+                // Step 4: Create a stream encryptor
+                ICryptoTransform crypto = aes.CreateEncryptor();
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new 
+                        CryptoStream(msEncrypt, crypto, CryptoStreamMode.Write))
+                    {
+                        using (BinaryWriter swEncrypt = new BinaryWriter(csEncrypt))
+                        {
+                            // Step 5: Write the private key to that stream
+                            swEncrypt.Write(privateKey);
+                        }
+                        // Step 6: Write the encrypted stream to the wallet.dat file
+                        File.WriteAllBytes(WalletPath, msEncrypt.ToArray());
+                    }
+                }
+
+                return wallet;
+            }
         }
 
-        public static Wallet LoadWallet() {
-            // Load wallet.dat file
-            throw new NotImplementedException();
+        public static Wallet LoadWallet(byte[] encryptionKey) {
+
+            using (Aes aes = Aes.Create())
+            {
+                // Declare the wallet; it will be initialized later on
+                Wallet wallet;
+
+                // Step 1: Get aes ready to decrypt
+                aes.Key = encryptionKey;
+                aes.GenerateIV();
+
+                // Step 2: Create the stream decryptor
+                ICryptoTransform crypto = aes.CreateDecryptor();
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new
+                        CryptoStream(msEncrypt, crypto, CryptoStreamMode.Write))
+                    {
+                        using (BinaryWriter swEncrypt = new BinaryWriter(csEncrypt))
+                        {
+                            // Step 3: Write the wallet.dat file's content to the stream
+                            swEncrypt.Write(File.ReadAllBytes(WalletPath));
+                        }
+                        // Step 4: Initialize the wallet with the decrypted stream's private key
+                        wallet = new Wallet(msEncrypt.ToArray());
+                    }
+                }
+
+                return wallet;
+            }
         }
     }
 }
