@@ -92,7 +92,7 @@ namespace BGC.Wallet
         public static byte[] ComputePubKey(byte[] privateKey) {
             using (var secp256k1 = new Secp256k1())
             {
-                var publicKey = new byte[64];
+                byte[] publicKey = new byte[64];
                 secp256k1.PublicKeyCreate(publicKey, privateKey);
 
                 byte[] standardKey = new byte[65];
