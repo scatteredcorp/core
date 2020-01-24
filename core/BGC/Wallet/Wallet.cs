@@ -11,7 +11,7 @@ namespace BGC.Wallet
 {
     public class Wallet {
 
-        private const byte Version = 1;
+        private byte Version = 1;
 
         public byte[] PrivateKey { get; }
         public byte[] PublicKey { get; }
@@ -21,6 +21,10 @@ namespace BGC.Wallet
             PublicKey = WalletHelper.ComputePubKey(privateKey);
         }
 
+        public void SetVersionByte(byte version) {
+            Version = version;
+        }
+        
         public byte[] Address() {
             // https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
             
@@ -35,7 +39,7 @@ namespace BGC.Wallet
             
             // Step 4: Add version byte (0x00)
             byte[] versioned = new byte[ripemdHash.Length + 1];
-            versioned[0] = 0x00;
+            versioned[0] = Version;
             
             for (int i = 0; i < ripemdHash.Length; i++)
             {
@@ -74,7 +78,7 @@ namespace BGC.Wallet
 
         private const string WalletPath = "./wallet.dat";
 
-        private static byte[] GeneratePrivateKey() {
+        public static byte[] GeneratePrivateKey() {
             using (var secp256k1 = new Secp256k1())
             {
                 byte[] privateKey = new byte[32];
