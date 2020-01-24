@@ -35,7 +35,68 @@ namespace BGC.Tests.Wallet {
 
                 Assert.Equal(BGC.Wallet.WalletHelper.ComputePubKey(privateKey), expectedResult);
             }
-            
         }
+        
+        [Fact]
+        public void TestAddress() {
+            
+            (string, string)[] keys = {
+                (
+                    "EA9162170FDDEA91F96278C297D7673EC757BD381CBA631BA5293597D8A5CF0F",
+                    "1F69zD7XjM4g8nc8vcAF9SnFzrdorYRPgB"
+                ),
+                (
+                    "AED526534B99AED5BD263C86D393237A8313F97C58FE275FE16D71D39CE18B4B",
+                    "1K94qBqGA3uyhzSpByfcvUzKsVEXvYXo4o"
+                ),
+                (
+                    "E79C6F1A02D0E79CF46F75CF9ADA6A33CA5AB03511B76E16A824389AD5A8C204",
+                    "1BQrx4ymbiiPZ9oeVGdCWWh5Pb7XwTtXUT"
+                ),
+                (
+                    "D2A95A2F37E5D2A9C15A40FAAFEF5F06FF6F850024825B239D110DAFE09DF737",
+                    "1PLpvHwHcG7yDWvjhgvuanRGHppBqDukyW"
+                )
+            };
+
+            foreach ((string priv, string address) in keys) {
+                byte[] privateKey = Utils.FromHex(priv);
+                BGC.Wallet.Wallet wallet = new BGC.Wallet.Wallet(privateKey);
+                byte[] a = wallet.Address();
+                
+                Assert.Equal(a, Base58.Base58Encode.Decode(address));
+            }
+        }
+        
+        [Fact]
+        public void TestEncodedAddress() {
+            
+            (string, string)[] keys = {
+                (
+                    "EA9162170FDDEA91F96278C297D7673EC757BD381CBA631BA5293597D8A5CF0F",
+                    "1F69zD7XjM4g8nc8vcAF9SnFzrdorYRPgB"
+                ),
+                (
+                    "AED526534B99AED5BD263C86D393237A8313F97C58FE275FE16D71D39CE18B4B",
+                    "1K94qBqGA3uyhzSpByfcvUzKsVEXvYXo4o"
+                ),
+                (
+                    "E79C6F1A02D0E79CF46F75CF9ADA6A33CA5AB03511B76E16A824389AD5A8C204",
+                    "1BQrx4ymbiiPZ9oeVGdCWWh5Pb7XwTtXUT"
+                ),
+                (
+                    "D2A95A2F37E5D2A9C15A40FAAFEF5F06FF6F850024825B239D110DAFE09DF737",
+                    "1PLpvHwHcG7yDWvjhgvuanRGHppBqDukyW"
+                )
+            };
+
+            foreach ((string priv, string address) in keys) {
+                byte[] privateKey = Utils.FromHex(priv);
+                BGC.Wallet.Wallet wallet = new BGC.Wallet.Wallet(privateKey);
+
+                Assert.Equal(wallet.EncodedAddress(), address);
+            }
+        }
+        
     }
 }
