@@ -11,7 +11,7 @@ namespace BGC.Wallet
 {
     public class Wallet {
 
-        private byte Version = 1;
+        private byte Version = 0x00;
 
         public byte[] PrivateKey { get; }
         public byte[] PublicKey { get; }
@@ -125,7 +125,7 @@ namespace BGC.Wallet
                 Wallet wallet = new Wallet(privateKey);
 
                 // Step 3: Get aes ready to encrypt the private key
-                aes.Key = encryptionKey;
+                aes.Key = encryptionKey; ;
                 aes.GenerateIV();
 
                 // Step 4: Create a stream encryptor
