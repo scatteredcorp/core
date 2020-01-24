@@ -19,6 +19,8 @@ namespace BGC {
             byte[] hash = sha.ComputeHash(pass);
             
             Wallet.Wallet wallet = Wallet.WalletHelper.CreateWallet(hash);
+            Console.WriteLine(string.Join(" ", wallet.PublicKey));
+            
             wallet.SetVersionByte(0x00);
             Console.WriteLine(wallet.EncodedAddress());
             Wallet.Wallet w = Wallet.WalletHelper.LoadWallet(hash);
