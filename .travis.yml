@@ -1,1 +1,12 @@
 language: csharp
+solution: ./core/BGC.sln
+mono: none
+dotnet: 2.1.502
+script:
+ - dotnet restore
+install:
+  - nuget restore BGC.sln
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+script:
+  - msbuild /p:Configuration=Release ./core/BGC.sln
+  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./core/BGC.Tests/bin/Release/BGC.Tests.dll
