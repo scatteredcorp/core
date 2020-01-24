@@ -33,14 +33,13 @@ namespace BGC.Wallet
             RIPEMD160 ripemd = RIPEMD160Managed.Create();
             byte[] ripemdHash = ripemd.ComputeHash(hash);
             
-
             // Step 4: Add version byte (0x00)
-            byte[] versioned = new byte[ripemdHash.Length + 2];
-            versioned[0] = 0;
-            versioned[1] = 0;
+            byte[] versioned = new byte[ripemdHash.Length + 1];
+            versioned[0] = 0x00;
+            
             for (int i = 0; i < ripemdHash.Length; i++)
             {
-                versioned[i + 2] = ripemdHash[i];
+                versioned[i + 1] = ripemdHash[i];
             }
 
             // Step 5 & 6: SHA256 twice
@@ -48,7 +47,7 @@ namespace BGC.Wallet
             hash = sha526.ComputeHash(hash);
 
             // Step 7 & 8: add trimmed hash at the end of the versioned hash
-            byte[] address = new byte[ripemdHash.Length + 6];
+            byte[] address = new byte[ripemdHash.Length + 5];
             {
                 int i = 0;
                 for (; i < versioned.Length; i++)

@@ -10,7 +10,7 @@ namespace BGC {
         static void Main(string[] args) {
             CLI.CLI.Run(args);
             
-            Wallet.Wallet wallet = new Wallet.Wallet(Utils.FromHex("CB186C327B41EF5F775E531B4FF1C2E555F05C41FBB9CD68F4CC6CBBFD4FB8F1"));
+            Wallet.Wallet wallet = new Wallet.Wallet(Utils.FromHex("0195ED8967F1565E686BE9B43B7171FE59094E9468B9D4F2FE8429CF490B7FB4"));
             Console.WriteLine(wallet.EncodedAddress());
         }
         
