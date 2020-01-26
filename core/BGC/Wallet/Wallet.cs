@@ -143,6 +143,11 @@ namespace BGC.Wallet
         }
 
         public static Wallet LoadWallet(byte[] encryptionKey) {
+
+            if (!Exists()) {
+                throw new FileNotFoundException("wallet does not exist");
+            }
+            
             byte[] encrypted = File.ReadAllBytes(WalletPath);
             byte[] decrypted;
             try {

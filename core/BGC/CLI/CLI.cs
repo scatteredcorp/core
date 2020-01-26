@@ -17,6 +17,7 @@ namespace BGC.CLI {
                     
                     WalletCmd.CreateWalletOptions,
                     WalletCmd.GetWalletOptions,
+                    WalletCmd.DeleteWalletOptions,
                     
                     InventoryCmd.InventoryOptions
                 >(args)
@@ -26,6 +27,7 @@ namespace BGC.CLI {
                 // Wallet related commands
                 .WithParsed<WalletCmd.CreateWalletOptions>(WalletCmd.CreateWallet)
                 .WithParsed<WalletCmd.GetWalletOptions>(WalletCmd.GetWallet)
+                .WithParsed<WalletCmd.DeleteWalletOptions>(WalletCmd.DeleteWallet)
 
                 // Inventory related commands
                 .WithParsed<InventoryCmd.InventoryOptions>(InventoryCmd.GetInventory)

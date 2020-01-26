@@ -32,6 +32,10 @@ namespace BGC.CLI {
             public string EncryptionKey { get; set; }
         }
 		public static void GetWallet(GetWalletOptions opts) {
+            if (!WalletHelper.Exists()) {
+                Console.WriteLine("Could not find wallet. Please create one.");
+                return;
+            }
             if (string.IsNullOrEmpty(opts.EncryptionKey)) {
                 Console.WriteLine("Please enter a valid decryption key.");
                 return;
@@ -40,6 +44,12 @@ namespace BGC.CLI {
 
             Wallet.Wallet wallet = WalletHelper.LoadWallet(pass);
             Console.WriteLine(wallet.EncodedAddress());
+        }
+        
+        [Verb("deletewallet", HelpText = "Delete wallet")]
+        public class DeleteWalletOptions { }
+        public static void DeleteWallet(DeleteWalletOptions opts) {
+            WalletHelper.DeleteWallet();
         }
 		
 	}
