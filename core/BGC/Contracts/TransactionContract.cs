@@ -1,65 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Xml;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
 
-    public class TransactionContract : BaseContract, IContract {
-        private new const byte Version = 1;
-        private new const byte Type = (byte) ContractType.TransactionContract;
-        
-        public Placement PlayerOnePlacement;
-        public Placement PlayerTwoPlacement;
+    /// <summary>
+    /// Serialization:
+    /// 1 byte : Version
+    /// 1 byte : Type
+    ///
+    /// ? bytes : Fee (Placement)
+    /// ? bytes : Player one placement
+    /// ? bytes : Player two placement
+    ///
+    /// 25 bytes : Player one pubkey hash (address)
+    /// 25 bytes : Player two pubkey hash (address)
+    ///
+    /// 4 bytes : Player one nonce
+    /// 64 bytes : Player one signature
+    ///
+    /// 4 bytes : Player two nonce
+    /// 64 bytes : Player two signature
+    /// </summary>
+    public class TransactionContract : IContract {
+        public const byte Version = 1;
+        public const byte Type = (byte) ContractType.TransactionContract;
 
-        public byte[] PlayerOnePubKeyHash;
-        public byte[] PlayerTwoPubKeyHash;
+        public Placement Fee { get; }
         
-        public byte[] PlayerOneSignature;
-        public byte[] PlayerTwoSignature;
+        public Placement PlayerOnePlacement { get; }
+        public Placement PlayerTwoPlacement { get; }
 
-        public TransactionContract(Placement fee, ulong nonce, Placement playerOnePlacement, Placement playerTwoPlacement, byte[] playerOnePubKeyHash,
-            byte[] playerTwoPubKeyHash) : base(fee, nonce) {
+        public byte[] PlayerOnePubKeyHash { get; }
+        public byte[] PlayerTwoPubKeyHash { get; }
+        
+
+        public uint PlayerOneNonce { get; }
+        public uint PlayerTwoNonce { get; }
+        
+        public byte[] PlayerOneSignature { get; }
+        public byte[] PlayerTwoSignature { get; }
+
+        public TransactionContract(
+            Placement fee, 
+            Placement playerOnePlacement, 
+            Placement playerTwoPlacement, 
+            byte[] playerOnePubKeyHash,
+            byte[] playerTwoPubKeyHash,
             
-            base.Version = Version;
-            base.Type = Type;
+            // Optional
+            uint playerOneNonce = 0,
+            uint playerTwoNonce = 0,
+            byte[] playerOneSignature = null,
+            byte[] playerTwoSignature = null
+        ) {
+
+            Fee = fee;
             
             PlayerOnePlacement = playerOnePlacement;
             PlayerTwoPlacement = playerTwoPlacement;
 
-            if (playerOnePubKeyHash.Length != 25 || playerTwoPubKeyHash.Length != 25) {
-                throw new Exception("Public key hash should be 20 bytes.");
-            }
-            
             PlayerOnePubKeyHash = playerOnePubKeyHash;
             PlayerTwoPubKeyHash = playerTwoPubKeyHash;
             
-            PlayerOneSignature = new byte[64];
-            PlayerTwoSignature = new byte[64];
+            PlayerOneNonce = playerOneNonce;
+            PlayerTwoNonce = playerTwoNonce;
+            
+            PlayerOneSignature = playerOneSignature ?? new byte[64];
+            PlayerTwoSignature = playerTwoSignature ?? new byte[64];
         }
 
-        public byte[] Serialize() {
+        public byte[] Serialize(ContractHelper.SerializationType serializationType = ContractHelper.SerializationType.Complete) {
+            throw new NotImplementedException();
+        }
+
+        public bool Validate() {
+            throw new NotImplementedException();
+        }
+
+        public bool Sign(byte[] privateKey, uint nonce) {
+            throw new NotImplementedException();
+        }
+
+        public byte[] PartialSerialize() {
             var serialized = new List<byte>();
+            
+            // Append version
             serialized.Add(Version);
+            // Append type
             serialized.Add(Type);
             
+            // Append fee
             serialized.AddRange(Fee.Serialize());
             
+            // Append player one placement
             serialized.AddRange(PlayerOnePlacement.Serialize());
+            // Append player two placement
             serialized.AddRange(PlayerTwoPlacement.Serialize());
             
+            // Append player one address
             serialized.AddRange(PlayerOnePubKeyHash);
+            // Append player two address
             serialized.AddRange(PlayerTwoPubKeyHash);
             
-            serialized.AddRange(BitConverter.GetBytes(Nonce));
-            
+            // Append player one nonce
+            serialized.AddRange(BitConverter.GetBytes(PlayerOneNonce));
+            // Append player one signature
             serialized.AddRange(PlayerOneSignature);
-            serialized.AddRange(PlayerTwoSignature);
             
             return serialized.ToArray();
         }
 
+        public byte[] Serialize() {
+            List<byte> partial = PartialSerialize().ToList();
+            
+            // Append player two nonce
+            partial.AddRange(BitConverter.GetBytes(PlayerTwoNonce));
+            // Append player two signature
+            partial.AddRange(PlayerTwoSignature);
+
+            return partial.ToArray();
+        }
+
+        public byte[] PartialSign() {
+            throw new NotImplementedException();
+        }
+        
         public bool Sign(byte[] privateKey) {
             throw new NotImplementedException();
         }
@@ -74,7 +143,7 @@ namespace BGC.Contracts {
             reward.Add(1, 500);
             reward.Add(2, 100);
             
-            TransactionContract coinbase = new TransactionContract(empty, 0, empty, reward, new byte[25], minerAddress);
+            TransactionContract coinbase = new TransactionContract(empty,empty, reward, new byte[25], minerAddress);
             return coinbase;
         }
     }

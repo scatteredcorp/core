@@ -79,6 +79,10 @@ namespace BGC.Wallet
 
         private const string WalletPath = "./wallet.dat";
 
+        public static void DeleteWallet() {
+            File.Delete(WalletPath);
+        }
+        
         public static byte[] GeneratePrivateKey() {
             using (var secp256k1 = new Secp256k1())
             {
@@ -111,14 +115,20 @@ namespace BGC.Wallet
         public static byte[] ComputeCompressedPubKey(BigInteger privateKey) {
             throw new NotImplementedException();
         }
+
+        public static bool Exists() {
+            return File.Exists(WalletPath);
+        }
         
         public static Wallet CreateWallet(byte[] encryptionKey) {
             // Generate private key / public key pair and save in wallet.dat
             // Encrypt wallet.dat with encrpytion key
             // Do not create wallet if wallet.dat exists
-            
-            AesManaged aes = new AesManaged();
-        
+
+            if (Exists()) {
+                throw new Exception("wallet already exists");
+            }
+             
             // Step 1: Generate a private key
             byte[] privateKey = GeneratePrivateKey();
 
@@ -134,7 +144,13 @@ namespace BGC.Wallet
 
         public static Wallet LoadWallet(byte[] encryptionKey) {
             byte[] encrypted = File.ReadAllBytes(WalletPath);
-            byte[] decrypted = Utils.DecryptBytes(encrypted, encryptionKey, new byte[16]);
+            byte[] decrypted;
+            try {
+                decrypted = Utils.DecryptBytes(encrypted, encryptionKey, new byte[16]);
+            }
+            catch {
+                throw new ArgumentException("Decryption key is invalid.");
+            }
             
             return new Wallet(decrypted);
             

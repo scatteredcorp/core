@@ -48,8 +48,7 @@ namespace BGC.Blockchain {
             BlockHeader = blockHeader;
             Contracts = contracts;
         }
-
-
+        
         public byte[] Serialize() {
             List<byte> serialized = new List<byte>();
             byte[] header = BlockHeader.Serialize();
@@ -58,7 +57,7 @@ namespace BGC.Blockchain {
             serialized.AddRange(BitConverter.GetBytes((uint) Contracts.Length));
 
             for (uint i = 0; i < Contracts.Length; i++) {
-                serialized.AddRange(Contracts[i].Serialize());
+                serialized.AddRange(Contracts[i].Serialize(ContractHelper.SerializationType.Complete));
             }
 
             return serialized.ToArray();
@@ -70,7 +69,7 @@ namespace BGC.Blockchain {
             List<byte[]> serialized = new List<byte[]>();
             
             for (uint i = 0; i < Contracts.Length; i++) {
-                serialized.Add(Contracts[i].Serialize());
+                serialized.Add(Contracts[i].Serialize(ContractHelper.SerializationType.Complete));
             }
             
             MerkleTree merkleTree = new MerkleTree(serialized.ToArray());

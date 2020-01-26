@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Text;
 using Xunit;
 using Wallet = BGC.Wallet;
 
@@ -97,6 +99,20 @@ namespace BGC.Tests.Wallet {
                 Assert.Equal(wallet.EncodedAddress(), address);
             }
         }
-        
+
+        [Fact]
+        public void TestCreateWallet() {
+
+            BGC.Wallet.WalletHelper.DeleteWallet();
+            
+            byte[] pass = Encoding.ASCII.GetBytes("password123");
+            BGC.Wallet.Wallet wallet = BGC.Wallet.WalletHelper.CreateWallet(pass);
+            BGC.Wallet.Wallet w = BGC.Wallet.WalletHelper.LoadWallet(pass);
+            
+            Assert.Equal(wallet.PrivateKey, w.PrivateKey);
+            Assert.Equal(wallet.PublicKey, w.PublicKey);
+            
+            BGC.Wallet.WalletHelper.DeleteWallet();
+        }
     }
 }

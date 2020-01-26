@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.IO;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
 
     public interface IContract {
-        byte[] Serialize();
-        bool Sign(byte[] privateKey);
+        byte[] Serialize(ContractHelper.SerializationType serializationType);
+        bool Validate();
+        //byte Type();
+        bool Sign(byte[] privateKey, uint nonce);
+    }
+
+    // Defines a contract with multiple signatures such as a Transaction or Start contract
+    public interface IContractMultiSig : IContract {
+        bool PartialSign(byte[] privateKey, uint playerOneNonce);
     }
 
     public enum ContractType {
@@ -16,171 +24,107 @@ namespace BGC.Contracts {
     }
 
     public static class ContractHelper {
-        public static StartContract DeserializeStartContract(byte[] data) {
-            // Contract version
-            byte version = data[0];
-            
-            // Contract type
-            byte contractType = data[1];
-            byte numMarbles = data[2];
-            uint offset = 3;
+        
+        public enum SerializationType {
+            NoSig,
+            Partial,
+            Complete
+        }
+        
+        public static IContract Deserialize(byte[] contract) {
+            byte contractType = contract[1];
 
-            Placement fee = new Placement();
-            Placement playerOnePlacement = new Placement();
-            Placement playerTwoPlacement = new Placement();
-
-            // Fee
-            for (uint i = 0; i < numMarbles; i++) {
-                byte type = data[offset];
-                offset++;
-
-                byte[] quantityBytes = new byte[8];
-                Array.Copy(data, offset, quantityBytes, 0, 8);
-                ulong quantity = BitConverter.ToUInt64(quantityBytes);
-            
-                fee.Add(type, quantity);
-                offset += 8;
+            switch (contractType) {
+                case (byte) ContractType.StartContract:
+                    return DeserializeStartContract(contract);
+                case (byte) ContractType.ThrowContract:
+                    return DeserializeThrowContract(contract);
+                case (byte) ContractType.TransactionContract:
+                    throw new NotImplementedException();
+                default:
+                    throw new InvalidDataException("Contract type is not valid.");
             }
-            
-            // Player one placement
-            numMarbles = data[offset];
-            offset++;
-            for (uint i = 0; i < numMarbles; i++) {
-                byte type = data[offset];
-                offset++;
-
-                byte[] quantityBytes = new byte[8];
-                Array.Copy(data, offset, quantityBytes, 0, 8);
-                ulong quantity = BitConverter.ToUInt64(quantityBytes);
-
-                playerOnePlacement.Add(type, quantity);
-                offset += 8;
-            }
-            
-            // Player two placement
-            numMarbles = data[offset];
-            offset++;
-            for (uint i = 0; i < numMarbles; i++) {
-                byte type = data[offset];
-                offset++;
-
-                byte[] quantityBytes = new byte[8];
-                Array.Copy(data, offset, quantityBytes, 0, 8);
-                ulong quantity = BitConverter.ToUInt64(quantityBytes);
-
-                playerTwoPlacement.Add(type, quantity);
-                offset += 8;
-            }
-
-            // Player one pubkey hash
-            byte[] pKeyHashOne = new byte[25];
-            Array.Copy(data, offset, pKeyHashOne, 0, 20);
-            
-            offset += 20;
-
-            // Player two pubkey hash
-            byte[] pKeyHashTwo = new byte[25];
-            Array.Copy(data, offset, pKeyHashTwo, 0, 20);
-
-            offset += 20;
-            
-            // Nonce
-            byte[] nonceBytes = new byte[8];
-            Array.Copy(data, offset, nonceBytes, 0, 8);
-            ulong nonce = BitConverter.ToUInt64(nonceBytes);
-
-            offset += 8;
-
-            // Signature player one
-            byte[] signatureOne = new byte[64];
-            Array.Copy(data, offset, signatureOne, 0, 64);
-            byte[] playerOneSignature = signatureOne;
-
-            offset += 64;
-            
-            // Signature player two
-            byte[] signatureTwo = new byte[64];
-            Array.Copy(data, offset, signatureTwo, 0, 64);
-
-            byte[] playerTwoSignature = signatureTwo;
-
-            StartContract contract = new StartContract(fee, nonce, playerOnePlacement, playerTwoPlacement, pKeyHashOne,
-                pKeyHashTwo) {
-                Type = contractType, PlayerOneSignature = playerOneSignature, PlayerTwoSignature = playerTwoSignature
-            };
-            
-            return contract;
-
         }
 
-        public static ThrowContract DeserializeThrowContract(byte[] data) {
-
-            // Contract version
-            byte version = data[0];
-            
-            // Contract type
-            byte contractType = data[1];
-            byte numMarbles = data[2];
-            uint offset = 3;
-
-            Placement fee = new Placement();
-            Placement playerOnePlacement = new Placement();
-            Placement playerTwoPlacement = new Placement();
-
-            // Fee
+        private static Placement DeserializePlacement(byte[] contract, ref uint offset) {
+            Placement placement = new Placement();
+            byte numMarbles = contract[offset];
             for (uint i = 0; i < numMarbles; i++) {
-                byte type = data[offset];
+                byte type = contract[offset];
                 offset++;
 
-                byte[] quantityBytes = new byte[8];
-                Array.Copy(data, offset, quantityBytes, 0, 8);
-                ulong quantity = BitConverter.ToUInt64(quantityBytes);
+                byte[] quantityBytes = new byte[4];
+                Array.Copy(contract, offset, quantityBytes, 0, 4);
+                uint quantity = BitConverter.ToUInt32(quantityBytes);
             
-                fee.Add(type, quantity);
-                offset += 8;
+                placement.Add(type, quantity);
+                offset += 4;
             }
 
-            byte x = data[offset];
-            offset++;
+            return placement;
+        }
 
-            byte z = data[offset];
-            offset++;
+        private static byte[] DeserializeAddress(byte[] data, ref uint offset) {
+            byte[] pubKeyHash = new byte[25];
+            Array.Copy(data, offset, pubKeyHash, 0, 25);
             
-            byte[] gameHash = new byte[32];
-            Array.Copy(data, offset, gameHash, 0, 32);
-            offset += 32;
-            
-            // Nonce
-            byte[] nonceBytes = new byte[8];
-            Array.Copy(data, offset, nonceBytes, 0, 8);
-            ulong nonce = BitConverter.ToUInt64(nonceBytes);
+            offset += 25;
+            return pubKeyHash;
+        }
 
-            offset += 8;
+        private static uint DeserializeNonce(byte[] data, ref uint offset) {
+            byte[] nonceBytes = new byte[4];
+            Array.Copy(data, offset, nonceBytes, 0, 4);
             
-            // Signature
+            offset += 4;
+            return BitConverter.ToUInt32(nonceBytes);;
+        }
+
+        private static byte[] DeserializeSignature(byte[] data, ref uint offset) {
             byte[] signature = new byte[64];
             Array.Copy(data, offset, signature, 0, 64);
+            offset += 64;
+            return signature;
+        }
+        
+        private static StartContract DeserializeStartContract(byte[] data) {
+            // Contract version
+            byte version = data[0];
+            
+            // Contract type
+            byte contractType = data[1];
+            byte numMarbles = data[2];
+            uint offset = 3;
 
-            byte[] playerTwoSignature = signature;
+            // Fee
+            Placement fee = DeserializePlacement(data, ref offset);
+            // Player one placement
+            Placement playerOnePlacement= DeserializePlacement(data, ref offset);
+            // Player two placement
+            Placement playerTwoPlacement = DeserializePlacement(data, ref offset);
+           
+            // Player one pubkey hash
+            byte[] pKeyHashOne = DeserializeAddress(data, ref offset);
+
+            // Player two pubkey hash
+            byte[] pKeyHashTwo = DeserializeAddress(data, ref offset);
             
-            ThrowContract contract = new ThrowContract(fee, nonce, gameHash, x, z);
-            contract.Signature = signature;
-            contract.Type = contractType;
+            // Player two nonce
+            uint playerOneNonce = DeserializeNonce(data, ref offset);
+            // Signature player one
+            byte[] signatureOne = DeserializeSignature(data, ref offset);
+
+            // Player one nonce
+            uint playerTwoNonce = DeserializeNonce(data, ref offset);
+            // Signature player two
+            byte[] signatureTwo = DeserializeSignature(data, ref offset);
             
+            StartContract contract = new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerTwoNonce, signatureOne, signatureTwo);
             return contract;
         }
-    }
-    
-    public abstract class BaseContract {
-        public byte Version;
-        public byte Type;
-        
-        public Placement Fee;
-        public ulong Nonce;
 
-        protected BaseContract(Placement fee, ulong nonce) {
-            Fee = fee;
-            Nonce = nonce;
+        private static ThrowContract DeserializeThrowContract(byte[] data) {
+            throw new NotImplementedException();
         }
     }
 }

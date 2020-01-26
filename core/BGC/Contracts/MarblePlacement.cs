@@ -1,36 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
+    
+    /// <summary>
+    /// Serialization:
+    /// 1 byte : Number of placement
+    ///
+    /// 1 byte : Marble type
+    /// 4 bytes : Amount
+    /// ... // each placement
+    /// 1 byte : Marble type
+    /// 4 bytes : Amount
+    /// </summary>
     public sealed class Placement {
-        private List<PlacementMarble> marbles = new List<PlacementMarble>();
+        public List<PlacementMarble> Marbles { get; } = new List<PlacementMarble>();
 
-        public void Add(byte type, ulong amount) {
-            for (byte i = 0; i < marbles.Count; i++) {
-                if (marbles[i].Type == type) {
-                    marbles[i].Amount += amount;
+        public void Add(byte type, uint amount) {
+            // Check if type is already in a placement
+            for (byte i = 0; i < Marbles.Count; i++) {
+                if (Marbles[i].Type == type) {
+                    // If it is, increase it
+                    Marbles[i].Amount += amount;
                     return;
                 }
             }
-            
-            marbles.Add(new PlacementMarble(type, amount));
+
+            // Otherwise, simply add it
+            Marbles.Add(new PlacementMarble(type, amount));
         }
 
-        public List<PlacementMarble> GetMarbles() {
-            return marbles;
-        }
-        
         public byte[] Serialize() {
-            var serialized = new List<byte> {(byte) marbles.Count};
+            // Initialize byte list
+            // Add number of marble types
+            List<byte> serialized = new List<byte> {(byte) Marbles.Count};
             
-            for (byte i = 0; i < marbles.Count; i++) {
-                serialized.Add(marbles[i].Type);
+            // For each type of marbles
+            // We append the type byte
+            // And also the amount of marbles of this specific type
+            for (byte i = 0; i < Marbles.Count; i++) {
+                serialized.Add(Marbles[i].Type);
                 
-                byte[] amount = BitConverter.GetBytes(marbles[i].Amount);
+                byte[] amount = BitConverter.GetBytes(Marbles[i].Amount);
                 serialized.AddRange(amount);
             }
             
+            // Return array of bytes
             return serialized.ToArray();
         }
     }
@@ -38,9 +55,9 @@ namespace BGC.Contracts {
     
     public class PlacementMarble {
         public byte Type;
-        public ulong Amount;
+        public uint Amount;
 
-        public PlacementMarble(byte type, ulong amount) {
+        public PlacementMarble(byte type, uint amount) {
             Type = type;
             Amount = amount;
         }

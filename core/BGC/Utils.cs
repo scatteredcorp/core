@@ -8,17 +8,20 @@ using BGC.Base58;
 
 namespace BGC {
 	public static class Utils {
+
 		public static bool ValidateAddress(string address) {
-			if (address.Length < 26 || address.Length > 35) return false;
-			byte[] decoded = Base58Encode.Decode(address);
+		    if (address.Length < 26 || address.Length > 35) return false;
+            return ValidateAddress(Base58Encode.Decode(address));
+        }
 
-			SHA256 sha = SHA256.Create();
-			byte[] d1 = sha.ComputeHash(Helper.SubArray(decoded, 0, 21));
-			byte[] d2 = sha.ComputeHash(d1);
+        public static bool ValidateAddress(byte[] address) {
+            SHA256 sha = SHA256.Create();
+            byte[] d1 = sha.ComputeHash(Helper.SubArray(address, 0, 21));
+            byte[] d2 = sha.ComputeHash(d1);
 
-			if (!Helper.SubArray(decoded, 21, 4).SequenceEqual(Helper.SubArray(d2, 0, 4))) return false;
-			return true;
-		}
+            if (!Helper.SubArray(address, 21, 4).SequenceEqual(Helper.SubArray(d2, 0, 4))) return false;
+            return true;
+        }
 
         public static byte[] FromHex(string value) {
             byte[] result = new byte[value.Length / 2];
@@ -84,8 +87,11 @@ namespace BGC {
             return result;
         }
         
-        public static byte[] EncryptBytes(byte[] plainBytes, byte[] key, byte[] iv)
+        public static byte[] EncryptBytes(byte[] plainBytes, byte[] passkey, byte[] iv)
             {
+                SHA256 sha = new SHA256Managed();
+                byte[] key = sha.ComputeHash(passkey);
+                
                 // Instantiate a new Aes object to perform string symmetric encryption
                 Aes encryptor = Aes.Create();
 
@@ -123,8 +129,10 @@ namespace BGC {
                 return cipherBytes;
             }
 
-    public static byte[] DecryptBytes(byte[] cipherBytes, byte[] key, byte[] iv)
+    public static byte[] DecryptBytes(byte[] cipherBytes, byte[] passkey, byte[] iv)
     {
+        SHA256 sha = new SHA256Managed();
+        byte[] key = sha.ComputeHash(passkey);
         // Instantiate a new Aes object to perform string symmetric encryption
         Aes encryptor = Aes.Create();
 
