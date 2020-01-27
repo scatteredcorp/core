@@ -69,8 +69,8 @@ namespace BGC.Contracts {
             PlayerOneNonce = playerOneNonce;
             PlayerTwoNonce = playerTwoNonce;
 
-            PlayerOneSignature = playerOneSig ?? new byte[64];
-            PlayerOneSignature = playerTwoSig ?? new byte[64];
+            PlayerOneSignature = playerOneSig;
+            PlayerOneSignature = playerTwoSig;
         }
 
         public bool Validate() {
@@ -108,6 +108,8 @@ namespace BGC.Contracts {
 
             // If serialization type is no sig, return unsigned contract
             if (serializationType == ContractHelper.SerializationType.NoSig) return serialized.ToArray();
+
+            if (PlayerOneSignature == null) throw new Exception("Contract not signed.");
             
             // Append player one signature
             serialized.AddRange(PlayerOneSignature);
@@ -118,6 +120,8 @@ namespace BGC.Contracts {
             // If serialization type is partial, we keep player one signature and player two so that Player Two can sign Player One Signature
             if (serializationType == ContractHelper.SerializationType.Partial) return serialized.ToArray();
             
+            if (PlayerTwoSignature == null) throw new Exception("Contract not signed.");
+
             // Append player two signature
             serialized.AddRange(PlayerTwoSignature);
             

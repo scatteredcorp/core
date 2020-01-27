@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Buffers;
 using System.Diagnostics.Contracts;
 using System.IO;
+using System.Xml.Schema;
 using BGC.Marbles;
 
 namespace BGC.Contracts {
@@ -49,6 +51,7 @@ namespace BGC.Contracts {
         private static Placement DeserializePlacement(byte[] contract, ref uint offset) {
             Placement placement = new Placement();
             byte numMarbles = contract[offset];
+            offset++;
             for (uint i = 0; i < numMarbles; i++) {
                 byte type = contract[offset];
                 offset++;
@@ -86,6 +89,13 @@ namespace BGC.Contracts {
             offset += 64;
             return signature;
         }
+
+        private static byte[] DeserializeHash(byte[] data, ref uint offset) {
+            byte[] hash = new byte[32];
+            Array.Copy(data, offset, hash, 0, 32);
+            offset += 32;
+            return hash;
+        }
         
         private static StartContract DeserializeStartContract(byte[] data) {
             // Contract version
@@ -93,29 +103,49 @@ namespace BGC.Contracts {
             
             // Contract type
             byte contractType = data[1];
-            byte numMarbles = data[2];
-            uint offset = 3;
+            uint offset = 2;
+            Console.WriteLine(offset);
 
             // Fee
             Placement fee = DeserializePlacement(data, ref offset);
+            Console.WriteLine(offset);
+
             // Player one placement
             Placement playerOnePlacement= DeserializePlacement(data, ref offset);
+            Console.WriteLine(offset);
+
             // Player two placement
             Placement playerTwoPlacement = DeserializePlacement(data, ref offset);
+            Console.WriteLine(offset);
+
            
             // Player one pubkey hash
             byte[] pKeyHashOne = DeserializeAddress(data, ref offset);
+            Console.WriteLine(offset);
 
             // Player two pubkey hash
             byte[] pKeyHashTwo = DeserializeAddress(data, ref offset);
-            
+            Console.WriteLine(offset);
+
             // Player two nonce
             uint playerOneNonce = DeserializeNonce(data, ref offset);
+            Console.WriteLine(offset);
+            if (offset == data.Length) {
+                // NoSig deserialization
+                return new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, 0, null, null);
+            }
+            
             // Signature player one
             byte[] signatureOne = DeserializeSignature(data, ref offset);
 
             // Player one nonce
             uint playerTwoNonce = DeserializeNonce(data, ref offset);
+            
+            if (offset == data.Length) {
+                // PartialSign deserialization
+                return new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerOneNonce, signatureOne, null);
+            }
+            
             // Signature player two
             byte[] signatureTwo = DeserializeSignature(data, ref offset);
             
@@ -124,7 +154,22 @@ namespace BGC.Contracts {
         }
 
         private static ThrowContract DeserializeThrowContract(byte[] data) {
-            throw new NotImplementedException();
+            byte version = data[0];
+            byte contractType = data[1];
+
+            uint offset = 2;
+            Placement fee = DeserializePlacement(data, ref offset);
+            
+            byte x = data[offset];
+            offset++;
+            byte y = data[offset];
+            offset++;
+
+            byte[] gameHash = DeserializeHash(data, ref offset);
+            uint nonce = DeserializeNonce(data, ref offset);
+            byte[] signature = DeserializeSignature(data, ref offset);
+            
+            return new ThrowContract(fee, gameHash, x, y, nonce, signature);
         }
     }
 }
