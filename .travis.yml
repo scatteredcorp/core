@@ -15,7 +15,6 @@ jobs:
       dotnet: 2.2.102
 
 install:
-  - dotnet tool restore
   - dotnet restore core
 
 script:
