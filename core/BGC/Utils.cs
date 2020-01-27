@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using BGC.Base58;
+using Secp256k1Net;
 
 namespace BGC {
 	public static class Utils {
@@ -172,8 +173,12 @@ namespace BGC {
 			}
 		}
 
-		public static byte[] SignECDSA(byte[] hash, byte[] privateKey) {
-			throw new Exception();
+		public static (byte[], bool) SignData(byte[] hash, byte[] privateKey) {
+			using (Secp256k1 secp256k1 = new Secp256k1()) {
+				byte[] sig = new byte[64];
+				bool valid = secp256k1.Sign(sig, hash, privateKey);
+				return (sig, valid);
+			}
 		}
 	}
 }

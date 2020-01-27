@@ -1,15 +1,18 @@
 ﻿using BGC.Contracts;
 using Xunit;
+using BGC.Wallet;
 
-namespace BGC.Tests.Contracts {
+
+namespace BGC.Tests.TestContracts {
     public class TestContracts {
         [Fact]
-        public void TestComputePubKey() {
+        public void TestSerializeStartContract() {
 
+            // Create dummy contract
             Placement fee = new Placement();
             fee.Add(0, 12);
             fee.Add(1, 15);
-
+            
             Placement playerOnePlacement = new Placement();
             playerOnePlacement.Add(2, 64);
             playerOnePlacement.Add(4, 32);
@@ -18,17 +21,48 @@ namespace BGC.Tests.Contracts {
             playerTwoPlacement.Add(5, 122);
             playerTwoPlacement.Add(8, 2);
             
-            BGC.Wallet.Wallet wallet1 = new BGC.Wallet.Wallet(BGC.Wallet.WalletHelper.GeneratePrivateKey());
+            // Dummy wallets
+            Wallet.Wallet wallet1 = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());
+            Wallet.Wallet wallet2 = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());
             
+
+            // Create contract
+            StartContract startContract = new StartContract(fee, playerOnePlacement, playerTwoPlacement,
+                wallet1.Address(), wallet2.Address());
+
+            // Serialize it (without signatures)
+            byte[] bytes = startContract.Serialize(ContractHelper.SerializationType.NoSig);
             
-            StartContract startContract = new StartContract(fee, playerOnePlacement, playerTwoPlacement, BGC.Wallet.WalletHelper.)
+            // Deserialize it
+            StartContract resultContract = (StartContract) Contracts.ContractHelper.Deserialize(bytes);
+    
+            // Check if versions match
+            Assert.Equal(bytes, resultContract.Serialize(ContractHelper.SerializationType.NoSig));
 
-            foreach ((string priv, string pub) in keys) {
-                byte[] privateKey = Utils.FromHex(priv);
-                byte[] expectedResult = Utils.FromHex(pub);
+            // Player one signs the contract
+            startContract.PartialSign(wallet1.PrivateKey, 0);
 
-                Assert.Equal(BGC.Wallet.WalletHelper.ComputePubKey(privateKey), expectedResult);
-            }
+            // Serialize it
+            bytes = startContract.Serialize(ContractHelper.SerializationType.Partial);
+            
+            // Deserialize it
+            resultContract = (StartContract) Contracts.ContractHelper.Deserialize(bytes);
+            
+            // Check if versions match
+            Assert.Equal(bytes, resultContract.Serialize(ContractHelper.SerializationType.Partial));
+
+            // Player two sign the contract
+            startContract.Sign(wallet2.PrivateKey, 0);
+
+            // Serialize it
+            bytes = startContract.Serialize(ContractHelper.SerializationType.Complete);
+            
+            // Deserialize it
+            resultContract = (StartContract) Contracts.ContractHelper.Deserialize(bytes);
+            
+            // Check if versions match
+            Assert.Equal(bytes, startContract.Serialize(ContractHelper.SerializationType.Complete));
+
         }
     }
 }

@@ -84,8 +84,7 @@ namespace BGC.Wallet
         }
         
         public static byte[] GeneratePrivateKey() {
-            using (var secp256k1 = new Secp256k1())
-            {
+            using (var secp256k1 = new Secp256k1()) {
                 byte[] privateKey = new byte[32];
                 RandomNumberGenerator rnd = 
                     System.Security.Cryptography.RandomNumberGenerator.Create();

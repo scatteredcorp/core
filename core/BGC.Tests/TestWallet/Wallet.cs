@@ -7,7 +7,7 @@ using System.Text;
 using Xunit;
 using Wallet = BGC.Wallet;
 
-namespace BGC.Tests.Wallet {
+namespace BGC.Tests.TestWallet {
     public class TestWallet {
         [Fact]
         public void TestComputePubKey() {

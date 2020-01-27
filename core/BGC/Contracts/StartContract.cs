@@ -133,24 +133,33 @@ namespace BGC.Contracts {
 
         public bool PartialSign(byte[] privateKey, uint playerOneNonce) {
             PlayerOneNonce = playerOneNonce;
-
             byte[] serialized = Serialize(ContractHelper.SerializationType.NoSig);
-
             // Compute signature using serialized byte array
-            PlayerOneSignature = new byte[64];
+            SHA256 sha256 = new SHA256Managed();
+            byte[] hash = sha256.ComputeHash(serialized);
 
-            throw new NotImplementedException();
+            (byte[] sig, bool valid) = Utils.SignData(hash, privateKey);
+            if (!valid) {
+                return false;
+            }
+
+            PlayerOneSignature = sig;
             return true;
         }
 
         public bool Sign(byte[] privateKey, uint playerTwoNonce) {
             PlayerTwoNonce = playerTwoNonce;
             byte[] serialized = Serialize(ContractHelper.SerializationType.Partial);
-
             // Compute signature using serialized byte array
-            PlayerTwoSignature = new byte[64];
-            throw new NotImplementedException();
-            
+            SHA256 sha256 = new SHA256Managed();
+            byte[] hash = sha256.ComputeHash(serialized);
+
+            (byte[] sig, bool valid) = Utils.SignData(hash, privateKey);
+            if (!valid) {
+                return false;
+            }
+
+            PlayerTwoSignature = sig;
             return true;
         }
     }

@@ -8,6 +8,7 @@ using System.Text;
 using BGC.Base58;
 using BGC.Contracts;
 using BGC.Wallet;
+using Secp256k1Net;
 
 namespace BGC {
     class BGC {
