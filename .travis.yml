@@ -8,11 +8,11 @@ jobs:
     - name: Windows
       os: windows
       before_install:
-        - choco install dotnetcore-sdk
+        - choco install dotnetcore-sdk --version=2.2.102
 
     - name: Linux
       os: linux
-      dotnet: 3.1.100
+      dotnet: 2.2.102
 
 install:
   - dotnet tool restore
