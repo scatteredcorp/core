@@ -37,11 +37,15 @@ namespace BGC.Network
             keepListening = true;
 
             listenerThread.Start();
+
+            Logger.Log("Listener thread started.", Logger.LoggingLevels.Debug);
         }
 
         public void StopListening()
         {
             keepListening = false;
+
+            Logger.Log("Sent request stop request to the listener.", Logger.LoggingLevels.Debug);
         }
 
         private void listen()
@@ -55,23 +59,50 @@ namespace BGC.Network
 
                 // Init the server
                 tcpServer = new TcpListener(localAddress, port);
-
+                
                 // Start listening to client requests
                 tcpServer.Start(maxClientsQueue);
 
+                Logger.Log("Successfully started the TCP server on port " + port, Logger.LoggingLevels.HighLogging);
+
                 // Buffer for incoming data
                 byte[] buffer = new byte[256];
-                string data = null;
 
                 while (keepListening)
                 {
+                    Logger.Log("Waiting for an incoming connection...", Logger.LoggingLevels.HighLogging);
 
+                    TcpClient tcpClient = tcpServer.AcceptTcpClient();
+
+                    Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
+
+                    NetworkStream stream = tcpClient.GetStream();
+
+                    int i;
+
+                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        Logger.Log("Received data...", Logger.LoggingLevels.Debug);
+                        IncomingQueue.Enqueue((buffer, ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address));
+                    }
+
+                    tcpClient.Close();
+
+                    Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);
                 }
+
+                Logger.Log("Listener: received stop request; stopping...", Logger.LoggingLevels.HighLogging);
             }
-            catch { }
+            catch (SocketException e) {
+                Logger.Log("SocketException: " + e, Logger.LoggingLevels.MinimalLogging);
+            }
             finally {
                 // Register the listener as stopped, so it doesn't get stuck in case of errors
                 keepListening = false;
+
+                tcpServer.Stop();
+
+                Logger.Log("Stopped the TCP server", Logger.LoggingLevels.HighLogging);
             }
         }
     }
