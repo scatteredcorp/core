@@ -12,6 +12,8 @@ namespace BGC.Contracts {
         bool Validate();
         //byte Type();
         bool Sign(byte[] privateKey, uint nonce);
+
+        void PrettyPrint();
     }
 
     // Defines a contract with multiple signatures such as a Transaction or Start contract

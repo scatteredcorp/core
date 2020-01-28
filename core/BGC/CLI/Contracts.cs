@@ -8,14 +8,14 @@ using BGC.Wallet;
 namespace BGC.CLI {
 	public static class ContractsCmd {
 		[Verb("signcontract", HelpText = "Sign a contract")]
-		public class ContractOptions {
+		public class SignContractOptions {
 			[Value(0)]
 			public string Contract { get; set; }
 			[Value(1)]
 			public string Password { get; set; }
 		}
 		
-		public static void SignContract(ContractOptions opts) {
+		public static void SignContract(SignContractOptions opts) {
 			byte[] contractBytes = Utils.FromHex(opts.Contract);
 			IContract contract = ContractHelper.Deserialize(contractBytes);
 
@@ -30,6 +30,18 @@ namespace BGC.CLI {
 			
 			Console.WriteLine(bytes.Length);
 			Console.WriteLine(Utils.ToHex(bytes));
+		}
+		
+		[Verb("decodecontract", HelpText = "Decode a contract")]
+		public class DecodeContractOptions {
+			[Value(0)]
+			public string Contract { get; set; }
+		}
+		
+		public static void DecodeContract(DecodeContractOptions opts) {
+			byte[] contractBytes = Utils.FromHex(opts.Contract);
+			IContract contract = ContractHelper.Deserialize(contractBytes);
+			contract.PrettyPrint();
 		}
 	}
 	

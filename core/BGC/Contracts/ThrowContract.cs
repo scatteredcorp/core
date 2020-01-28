@@ -56,6 +56,10 @@ namespace BGC.Contracts {
             throw new NotImplementedException();
         }
 
+        public void PrettyPrint() {
+            throw new NotImplementedException();
+        }
+
         public byte[] Serialize() {
             List<byte> serialized = new List<byte>();
             

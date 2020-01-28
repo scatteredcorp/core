@@ -13,7 +13,8 @@ namespace BGC.CLI {
             cmd = Parser.Default.ParseArguments<
                     BlockchainCmd.InitOptions,
                     
-                    ContractsCmd.ContractOptions,
+                    ContractsCmd.SignContractOptions,
+                    ContractsCmd.DecodeContractOptions,
                     
                     WalletCmd.CreateWalletOptions,
                     WalletCmd.GetWalletOptions,
@@ -33,7 +34,8 @@ namespace BGC.CLI {
                 .WithParsed<InventoryCmd.InventoryOptions>(InventoryCmd.GetInventory)
 
                 // Contracts related commands
-                .WithParsed<ContractsCmd.ContractOptions>(ContractsCmd.SignContract);
+                .WithParsed<ContractsCmd.SignContractOptions>(ContractsCmd.SignContract)
+                .WithParsed<ContractsCmd.DecodeContractOptions>(ContractsCmd.DecodeContract);
 
         }
 
