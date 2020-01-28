@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
+using System.Net;
 
 namespace BGC.Network
 {
     class Listener
     {
-        public Queue<byte[]> IncomingQueue;
+        public Queue<(byte[], IPAddress)> IncomingQueue;
 
         private Thread listenerThread;
 
@@ -16,7 +15,7 @@ namespace BGC.Network
 
         public Listener()
         {
-            IncomingQueue = new Queue<byte[]>();
+            IncomingQueue = new Queue<(byte[], IPAddress)>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
