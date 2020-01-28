@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Xml;
+using BGC.Base58;
 using BGC.Marbles;
+using BGC.Wallet;
 
 namespace BGC.Contracts {
 
@@ -70,7 +72,7 @@ namespace BGC.Contracts {
             PlayerTwoNonce = playerTwoNonce;
 
             PlayerOneSignature = playerOneSig;
-            PlayerOneSignature = playerTwoSig;
+            PlayerTwoSignature = playerTwoSig;
         }
 
         public bool Validate() {
@@ -134,6 +136,7 @@ namespace BGC.Contracts {
         public bool PartialSign(byte[] privateKey, uint playerOneNonce) {
             PlayerOneNonce = playerOneNonce;
             byte[] serialized = Serialize(ContractHelper.SerializationType.NoSig);
+            
             // Compute signature using serialized byte array
             SHA256 sha256 = new SHA256Managed();
             byte[] hash = sha256.ComputeHash(serialized);
@@ -144,6 +147,7 @@ namespace BGC.Contracts {
             }
 
             PlayerOneSignature = sig;
+
             return true;
         }
 
@@ -161,6 +165,27 @@ namespace BGC.Contracts {
 
             PlayerTwoSignature = sig;
             return true;
+        }
+
+        public void PrettyPrint() {
+            Console.WriteLine("Version: {0}", Version);
+            Console.WriteLine("Type: {0}", Type);
+            Console.WriteLine("Fee:");
+            Fee.PrettyPrint();
+            Console.WriteLine("Player One Placement:");
+            PlayerOnePlacement.PrettyPrint();
+            Console.WriteLine("Player Two Placement:");
+            PlayerTwoPlacement.PrettyPrint();
+            
+            Console.WriteLine("Player One Address: {0}", Base58Encode.Encode(PlayerOnePubKeyHash));
+            Console.WriteLine("Player Two Address: {0}", Base58Encode.Encode(PlayerTwoPubKeyHash));
+            
+            Console.WriteLine("Player One Nonce: {0}", PlayerOneNonce);
+            Console.WriteLine("Player One Sig: {0}", string.Join(" ", PlayerOneSignature));
+            
+            Console.WriteLine("Player Two Nonce: {0}", PlayerTwoNonce);
+            Console.WriteLine("Player Two Sig: {0}", string.Join(" ", PlayerTwoSignature));
+
         }
     }
 

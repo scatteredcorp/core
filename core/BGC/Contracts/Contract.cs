@@ -48,6 +48,14 @@ namespace BGC.Contracts {
             }
         }
 
+        public static bool PartialSign(IContractMultiSig contractMultiSig, byte[] privateKey, uint nonce) {
+            return contractMultiSig.PartialSign(privateKey, nonce);
+        }
+
+        public static bool Sign(IContract contract, byte[] privateKey, uint nonce) {
+            return contract.Sign(privateKey, nonce);
+        }
+
         private static Placement DeserializePlacement(byte[] contract, ref uint offset) {
             Placement placement = new Placement();
             byte numMarbles = contract[offset];
@@ -104,32 +112,25 @@ namespace BGC.Contracts {
             // Contract type
             byte contractType = data[1];
             uint offset = 2;
-            Console.WriteLine(offset);
 
             // Fee
             Placement fee = DeserializePlacement(data, ref offset);
-            Console.WriteLine(offset);
 
             // Player one placement
             Placement playerOnePlacement= DeserializePlacement(data, ref offset);
-            Console.WriteLine(offset);
 
             // Player two placement
             Placement playerTwoPlacement = DeserializePlacement(data, ref offset);
-            Console.WriteLine(offset);
 
-           
             // Player one pubkey hash
             byte[] pKeyHashOne = DeserializeAddress(data, ref offset);
-            Console.WriteLine(offset);
 
             // Player two pubkey hash
             byte[] pKeyHashTwo = DeserializeAddress(data, ref offset);
-            Console.WriteLine(offset);
 
             // Player two nonce
             uint playerOneNonce = DeserializeNonce(data, ref offset);
-            Console.WriteLine(offset);
+
             if (offset == data.Length) {
                 // NoSig deserialization
                 return new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, 0, null, null);
@@ -143,7 +144,7 @@ namespace BGC.Contracts {
             
             if (offset == data.Length) {
                 // PartialSign deserialization
-                return new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerOneNonce, signatureOne, null);
+                return new StartContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerTwoNonce, signatureOne, null);
             }
             
             // Signature player two

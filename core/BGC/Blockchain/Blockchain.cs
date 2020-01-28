@@ -55,8 +55,6 @@ namespace BGC.Blockchain {
             
             // Store last hash
             DB.Put(lh, hash);
-            
-            Console.WriteLine(BitConverter.ToString(hash));
         }
     }
 }

@@ -50,6 +50,14 @@ namespace BGC.Contracts {
             // Return array of bytes
             return serialized.ToArray();
         }
+
+        public void PrettyPrint() {
+            for (int i = 0; i < Marbles.Count; i++) {
+                Console.WriteLine("\tType: {0}", Marbles[i].Type);
+                Console.WriteLine("\tAmount: {0}", Marbles[i].Amount);
+                Console.WriteLine("");
+            }
+        }
     }
     
     

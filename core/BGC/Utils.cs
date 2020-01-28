@@ -24,6 +24,14 @@ namespace BGC {
 			return true;
 		}
 
+		public static byte[] StringToBytes(string data) {
+			return Encoding.UTF8.GetBytes(data);
+		}
+		
+		public static string ToHex(byte[] bytes) {
+			return String.Join(" ", bytes.Select(b => b.ToString("x2")).ToArray()).Replace(" ", "").ToUpper();
+		}
+		
 		public static byte[] FromHex(string value) {
 			byte[] result = new byte[value.Length / 2];
 
@@ -87,7 +95,6 @@ namespace BGC {
 
 			return result;
 		}
-
 		public static byte[] EncryptBytes(byte[] plainBytes, byte[] passkey, byte[] iv) {
 			SHA256 sha = new SHA256Managed();
 			byte[] key = sha.ComputeHash(passkey);

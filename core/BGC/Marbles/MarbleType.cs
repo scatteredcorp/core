@@ -4,20 +4,20 @@ using System.Linq;
 using System.Reflection;
 
 namespace BGC.Marbles {
-	public abstract class Enumeration : IComparable
+	public abstract class MarbleType : IComparable
 	{
 		public byte Type { get; private set; }
 		public string Name { get; private set; }
 
 
-		protected Enumeration(byte type, string name) {
+		protected MarbleType(byte type, string name) {
 			Type = type;
 			Name = name;
 		}
 
 		public override string ToString() => Name;
 
-		public static IEnumerable<T> GetAll<T>() where T : Enumeration
+		public static IEnumerable<T> GetAll<T>() where T : MarbleType
 		{
 			var fields = typeof(T).GetFields(BindingFlags.Public |
 			                                 BindingFlags.Static |
@@ -28,7 +28,7 @@ namespace BGC.Marbles {
 
 		public override bool Equals(object obj)
 		{
-			var otherValue = obj as Enumeration;
+			var otherValue = obj as MarbleType;
 
 			if (otherValue == null)
 				return false;

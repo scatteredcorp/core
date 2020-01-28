@@ -25,7 +25,6 @@ namespace BGC.Tests.TestContracts {
             Wallet.Wallet wallet1 = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());
             Wallet.Wallet wallet2 = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());
             
-
             // Create contract
             StartContract startContract = new StartContract(fee, playerOnePlacement, playerTwoPlacement,
                 wallet1.Address(), wallet2.Address());

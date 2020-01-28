@@ -105,7 +105,7 @@ namespace BGC.Tests.TestWallet {
 
             BGC.Wallet.WalletHelper.DeleteWallet();
             
-            byte[] pass = Encoding.ASCII.GetBytes("password123");
+            byte[] pass = Encoding.UTF8.GetBytes("password123");
             BGC.Wallet.Wallet wallet = BGC.Wallet.WalletHelper.CreateWallet(pass);
             BGC.Wallet.Wallet w = BGC.Wallet.WalletHelper.LoadWallet(pass);
             

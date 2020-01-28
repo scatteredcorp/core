@@ -1,5 +1,5 @@
 ﻿namespace BGC.Marbles {
-    public class Marble : Enumeration {
+    public class Marble : MarbleType {
        
         public static Marble Earth = new Marble(0, "Earth");
         public static Marble Ocean = new Marble(1, "Earth");
