@@ -24,5 +24,11 @@ namespace BGC
                 Console.Out.WriteLine(message);
             }
         }
+
+        // .Debug wrapper
+        public static void Debug(string message)
+        {
+            Log(message, LoggingLevels.Debug);
+        }
     }
 }
