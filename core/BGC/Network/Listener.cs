@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Net;
+using System.Net.Sockets;
 
 namespace BGC.Network
 {
@@ -13,13 +14,22 @@ namespace BGC.Network
         private bool keepListening;
         public bool IsRunning => keepListening;
 
-        public Listener()
+        private int port;
+        public int Port => port;
+
+        private int maxClientsQueue;
+        public int MaxClientsQueue => maxClientsQueue;
+
+        public Listener(int port, int maxClientsQueue)
         {
             IncomingQueue = new Queue<(byte[], IPAddress)>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
             keepListening = false;
+
+            this.port = port;
+            this.maxClientsQueue = maxClientsQueue;
         }
 
         public void StartListening()
@@ -36,9 +46,32 @@ namespace BGC.Network
 
         private void listen()
         {
-            while (keepListening)
+            TcpListener tcpServer = null;
+
+            try
             {
-                // Listen
+                // Set the local address
+                IPAddress localAddress = IPAddress.Parse("0.0.0.0");
+
+                // Init the server
+                tcpServer = new TcpListener(localAddress, port);
+
+                // Start listening to client requests
+                tcpServer.Start(maxClientsQueue);
+
+                // Buffer for incoming data
+                byte[] buffer = new byte[256];
+                string data = null;
+
+                while (keepListening)
+                {
+
+                }
+            }
+            catch { }
+            finally {
+                // Register the listener as stopped, so it doesn't get stuck in case of errors
+                keepListening = false;
             }
         }
     }
