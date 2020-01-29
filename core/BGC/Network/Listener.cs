@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 namespace BGC.Network
 {
@@ -90,7 +91,7 @@ namespace BGC.Network
                     NetworkStream stream = tcpClient.GetStream();
 
                     int i;
-
+                    
                     while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
                     {
                         Logger.Log("Received data...", Logger.LoggingLevels.Debug);
@@ -106,6 +107,9 @@ namespace BGC.Network
             }
             catch (SocketException e) {
                 Logger.Log("SocketException while listening: " + e, Logger.LoggingLevels.MinimalLogging);
+            }
+            catch (IOException e) {
+                Logger.Log("IOException while listening: " + e, Logger.LoggingLevels.MinimalLogging);
             }
             finally {
                 // Register the listener as stopped, so it doesn't get stuck in case of errors
