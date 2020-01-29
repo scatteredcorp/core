@@ -20,7 +20,9 @@ namespace BGC.Network
         private int maxClientsQueue;
         public int MaxClientsQueue => maxClientsQueue;
 
-        public Listener(int port, int maxClientsQueue)
+        private int updateInterval;
+
+        public Listener(int port, int maxClientsQueue, int serverUpdateInterval = 50)
         {
             IncomingQueue = new Queue<(byte[], IPAddress)>();
 
@@ -30,6 +32,7 @@ namespace BGC.Network
 
             this.port = port;
             this.maxClientsQueue = maxClientsQueue;
+            updateInterval = serverUpdateInterval;
         }
 
         public void StartListening()
@@ -71,6 +74,14 @@ namespace BGC.Network
                 while (keepListening)
                 {
                     Logger.Log("Waiting for an incoming connection...", Logger.LoggingLevels.HighLogging);
+
+                    while (keepListening && !tcpServer.Pending())
+                    {
+                        Thread.Sleep(updateInterval);
+                    }
+
+                    if (!keepListening)
+                        break;
 
                     TcpClient tcpClient = tcpServer.AcceptTcpClient();
 
