@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Threading.Tasks;
 
 namespace BGC.Network
 {
     public class Network
     {
-        public enum Codes
+        public enum ReturnCode
         {
             Success = 0,
             SocketException = 1,
@@ -14,9 +15,9 @@ namespace BGC.Network
             SocketClosedException = 3
         }
 
-        public static Codes SendData(IPEndPoint target, byte[] data)
+        public static async Task<ReturnCode> SendData(IPEndPoint target, byte[] data)
         {
-            Codes r = Codes.Success;
+            ReturnCode r = ReturnCode.Success;
             try
             {
                 Logger.Debug("Sending data to " + target);
@@ -29,17 +30,17 @@ namespace BGC.Network
             }
             catch (SocketException e)
             {
-                r = Codes.SocketException;
+                r = ReturnCode.SocketException;
                 Logger.Log("SocketException while sending data: " + e + "\nWhile sending data to: " + target, Logger.LoggingLevels.MinimalLogging);
             }
             catch (ObjectDisposedException e)
             {
-                r = Codes.SocketClosedException;
+                r = ReturnCode.SocketClosedException;
                 Logger.Log("Socket unexpectedly closed while sending data to " + target, Logger.LoggingLevels.MinimalLogging);
             }
             catch (System.ArgumentNullException)
             {
-                r = Codes.NullException;
+                r = ReturnCode.NullException;
                 Logger.Log("NullException while sending data", Logger.LoggingLevels.HighLogging);
             }
             finally
