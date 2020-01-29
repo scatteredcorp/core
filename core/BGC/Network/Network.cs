@@ -56,6 +56,8 @@ namespace BGC.Network
                 Thread.Sleep(2000);
 
                 p.returnCode = ReturnCode.Success;
+
+                Logger.Debug("Successfully sent data to " + p.target);
             }
             catch (SocketException e)
             {
@@ -74,7 +76,7 @@ namespace BGC.Network
             }
             finally
             {
-                Logger.Debug("Successfully sent data to " + p.target);
+                
             }
         }
     }
