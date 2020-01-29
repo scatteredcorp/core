@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 
 namespace BGC.Network
 {
