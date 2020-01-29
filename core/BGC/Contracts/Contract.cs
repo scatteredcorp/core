@@ -169,10 +169,13 @@ namespace BGC.Contracts {
             offset++;
 
             byte[] gameHash = DeserializeHash(data, ref offset);
+            byte throwNonce = data[offset];
+            offset++;
+            
             uint nonce = DeserializeNonce(data, ref offset);
             byte[] signature = DeserializeSignature(data, ref offset);
             
-            return new ThrowContract(fee, gameHash, x, y, nonce, signature);
+            return new ThrowContract(fee, gameHash, x, y, throwNonce, nonce, signature);
         }
     }
 }
