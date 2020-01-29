@@ -93,15 +93,17 @@ namespace BGC.Network
                     Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
 
                     buffer = new byte[256];
-                    socket.Receive(buffer);
+                    //socket.Receive(buffer);
                     
                     int recv;
-                    while((recv = socket.Receive(buffer)) > 0)
-                    {     
+                    do
+                    {
+                        recv = socket.Receive(buffer);
                         Console.WriteLine(
                             Encoding.ASCII.GetString(buffer, 0, recv));
                         Console.WriteLine(recv);
-                    }
+                    } while (recv == 256);
+
                     Console.WriteLine("hello");
                     
                     IncomingQueue.Enqueue((buffer, socket.RemoteEndPoint as IPEndPoint));

@@ -53,6 +53,8 @@ namespace BGC.Network
 
                 socket.Send(p.data);
 
+                Thread.Sleep(2000);
+
                 p.returnCode = ReturnCode.Success;
             }
             catch (SocketException e)
