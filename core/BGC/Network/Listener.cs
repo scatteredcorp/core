@@ -105,7 +105,7 @@ namespace BGC.Network
                 Logger.Log("Listener: received stop request; stopping...", Logger.LoggingLevels.HighLogging);
             }
             catch (SocketException e) {
-                Logger.Log("SocketException: " + e, Logger.LoggingLevels.MinimalLogging);
+                Logger.Log("SocketException while listening: " + e, Logger.LoggingLevels.MinimalLogging);
             }
             finally {
                 // Register the listener as stopped, so it doesn't get stuck in case of errors
