@@ -8,7 +8,7 @@ namespace BGC.Network
 {
     class Listener
     {
-        public Queue<(byte[], IPAddress)> IncomingQueue;
+        public Queue<(byte[], IPEndPoint)> IncomingQueue;
 
         private Thread listenerThread;
 
@@ -25,7 +25,7 @@ namespace BGC.Network
 
         public Listener(int port, int maxClientsQueue, int serverUpdateInterval = 50)
         {
-            IncomingQueue = new Queue<(byte[], IPAddress)>();
+            IncomingQueue = new Queue<(byte[], IPEndPoint)>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
@@ -70,7 +70,7 @@ namespace BGC.Network
                 Logger.Log("Successfully started the TCP server on port " + port, Logger.LoggingLevels.HighLogging);
 
                 // Buffer for incoming data
-                byte[] buffer = new byte[256];
+                byte[] buffer;
 
                 while (keepListening)
                 {
@@ -86,17 +86,15 @@ namespace BGC.Network
 
                     TcpClient tcpClient = tcpServer.AcceptTcpClient();
 
+                    Socket socket = tcpClient.Client;
+
                     Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
 
-                    NetworkStream stream = tcpClient.GetStream();
+                    buffer = new byte[256];
 
-                    int i;
-                    
-                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
-                    {
-                        Logger.Log("Received data...", Logger.LoggingLevels.Debug);
-                        IncomingQueue.Enqueue((buffer, ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address));
-                    }
+                    socket.Receive(buffer);
+
+                    IncomingQueue.Enqueue((buffer, socket.RemoteEndPoint as IPEndPoint));
 
                     tcpClient.Close();
 
