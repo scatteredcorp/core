@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace BGC.Network
 {
@@ -91,9 +93,17 @@ namespace BGC.Network
                     Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
 
                     buffer = new byte[256];
-
                     socket.Receive(buffer);
-
+                    
+                    int recv;
+                    while((recv = socket.Receive(buffer)) > 0)
+                    {     
+                        Console.WriteLine(
+                            Encoding.ASCII.GetString(buffer, 0, recv));
+                        Console.WriteLine(recv);
+                    }
+                    Console.WriteLine("hello");
+                    
                     IncomingQueue.Enqueue((buffer, socket.RemoteEndPoint as IPEndPoint));
 
                     tcpClient.Close();

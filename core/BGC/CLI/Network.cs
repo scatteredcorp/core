@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using BGC.Network;
 using BGC.Wallet;
 using CommandLine;
@@ -49,6 +50,7 @@ namespace BGC.CLI {
 
 			Network.Network.ReturnCode code = Network.Network.ReturnCode.Pending;
 			Network.Network.SendData(ip, Encoding.UTF8.GetBytes(opts.Data), ref code);
+			Thread.Sleep(5000);
 		}
 		
 	}
