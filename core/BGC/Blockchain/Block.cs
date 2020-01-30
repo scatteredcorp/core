@@ -1,9 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using BGC.Contracts;
 
 namespace BGC.Blockchain {
 
+    /// <summary>
+    ///  Serialization:
+    /// 
+    /// Version: 1 byte
+    /// Previous Block Header Hash: 32 bytes
+    /// Merkle Root Hash: 32 bytes
+    /// Timestamp: 4 bytes
+    /// nBits: 4 bytes
+    /// Nonce: 4 bytes
+    /// </summary>
     public struct BlockHeader {
         public byte Version;
 
@@ -26,7 +37,7 @@ namespace BGC.Blockchain {
 
         public byte[] Serialize() {
             List<byte> serialized = new List<byte> {Version};
-
+        
             serialized.AddRange(PreviousHash);
             serialized.AddRange(MerkleRoot);
             serialized.AddRange(BitConverter.GetBytes(Timestamp));
@@ -35,8 +46,22 @@ namespace BGC.Blockchain {
             
             return serialized.ToArray();
         }
+        
+        public byte[] Hash() {
+            byte[] serialized = Serialize();
+            SHA256 sha256 = new SHA256Managed();
+            return sha256.ComputeHash(serialized);
+        }
     }
     
+    /// <summary>
+    /// Serialization:
+    ///
+    /// Block Header: 77 bytes
+    /// Number of contracts: 4 bytes
+    /// Serialized signed contracts: ? bytes
+    /// 
+    /// </summary>
     public struct Block {
         
         private const byte Version = 1;
@@ -61,6 +86,10 @@ namespace BGC.Blockchain {
             }
 
             return serialized.ToArray();
+        }
+
+        public bool Save() {
+            return Blockchain.SaveBlock(this);
         }
 
         public byte[] HashContracts() {
