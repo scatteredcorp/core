@@ -187,6 +187,10 @@ namespace BGC.Contracts {
             Console.WriteLine("Player Two Sig: {0}", string.Join(" ", PlayerTwoSignature));
 
         }
+
+        public new byte GetType() {
+            return Type;
+        }
     }
 
 }

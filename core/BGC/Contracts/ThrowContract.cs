@@ -123,5 +123,8 @@ namespace BGC.Contracts {
             Signature = sig;
             return true;
         }
+        public new byte GetType() {
+            return Type;
+        }
     }
 }
