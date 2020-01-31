@@ -11,7 +11,9 @@ namespace BGC.Contracts {
     public interface IContract {
         byte[] Serialize(ContractHelper.SerializationType serializationType);
         bool Validate();
-        //byte Type();
+        
+        byte GetType();
+        
         bool Sign(byte[] privateKey, uint nonce);
 
         void PrettyPrint();
@@ -194,7 +196,7 @@ namespace BGC.Contracts {
             
             byte x = data[offset];
             offset++;
-            byte y = data[offset];
+            byte z = data[offset];
             offset++;
 
             byte[] gameHash = DeserializeHash(data, ref offset);
@@ -202,13 +204,14 @@ namespace BGC.Contracts {
             offset++;
             
             uint nonce = DeserializeNonce(data, ref offset);
+            
             if (offset == data.Length) {
                 // NoSig deserialization
-                return (new ThrowContract(fee, gameHash, x, y, throwNonce, nonce), offset);
+                return (new ThrowContract(fee, gameHash, x, z, throwNonce, nonce), offset);
             }
             byte[] signature = DeserializeSignature(data, ref offset);
             
-            return (new ThrowContract(fee, gameHash, x, y, throwNonce, nonce, signature), offset);
+            return (new ThrowContract(fee, gameHash, x, z, throwNonce, nonce, signature), offset);
         }
     }
 }

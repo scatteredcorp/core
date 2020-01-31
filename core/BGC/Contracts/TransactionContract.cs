@@ -136,6 +136,9 @@ namespace BGC.Contracts {
         public bool Sign(byte[] privateKey) {
             throw new NotImplementedException();
         }
+        public new byte GetType() {
+            return Type;
+        }
     }
 
     public static class TransactionHelper {
