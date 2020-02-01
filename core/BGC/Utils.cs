@@ -187,5 +187,24 @@ namespace BGC {
 				return (sig, valid);
 			}
 		}
+
+        public static byte[] ConcatBytes(byte[] b1, byte[] b2) {
+            if (b2 == null) return b1;
+            byte[] result = new byte[b2.Length + b2.Length];
+            uint i = 0;
+            for (; i < b1.Length; i++) {
+                result[i] = b1[i];
+            }
+            for (uint j = 0; j < b2.Length; j++) {
+                result[i] = b2[j];
+                i++;
+            }
+
+            return result;
+        }
+
+        public static byte[] BuildKey(string prefix, byte[] hash = null) {
+            return ConcatBytes(Encoding.ASCII.GetBytes(prefix), hash);
+        }
 	}
 }

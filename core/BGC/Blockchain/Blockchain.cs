@@ -12,9 +12,6 @@ using Secp256k1Net;
 
 namespace BGC.Blockchain {
     public static class Blockchain {
-        private static readonly byte[] lh = Encoding.ASCII.GetBytes("lh");
-        private static readonly byte[] blockPrefix = Encoding.ASCII.GetBytes("b");
-        
         private const string dbLocation = "./tmp";
 
         public static byte[] LastHash { get; private set; }
@@ -26,17 +23,26 @@ namespace BGC.Blockchain {
             try {
                 Options options = new Options{CreateIfMissing = false};
                 DB = new DB(options, dbLocation);
-            } catch {
+                LastHash = DB.Get(Utils.BuildKey("lh"));
+                
+                Height = BitConverter.ToUInt32(DB.Get(Utils.BuildKey("h")));
+                Console.Write("here");
+                
+                byte[] blockBytes = DB.Get(Utils.BuildKey("b", LastHash));
+                Block block = DeserializeBlock(blockBytes);
+
+            } catch(Exception e) {
+                Console.Write(e);
                 Console.WriteLine("Blockchain has not been initialized.");
                 System.Environment.Exit(1);
             }
         }
-
+        
         public static void Init(byte[] rewardAddress) {
             // Check if blockchain has already been initialized
             Options options = new Options{CreateIfMissing = true};
             DB = new DB(options, dbLocation);
-            byte[] lastHash = DB.Get(lh);
+            byte[] lastHash = DB.Get(Utils.BuildKey("lh"));
             
             if (lastHash != null) {
                 Console.WriteLine("Blockchain is already initialized.");
@@ -55,36 +61,28 @@ namespace BGC.Blockchain {
 
             // Set last hash
             LastHash = hash;
+            Height++;
             
             // Store block data
-            DB.Put(MakeKey(blockPrefix, hash), genesisBlock.Serialize());
-            
-            // Store last hash
-            DB.Put(lh, hash);
+            genesisBlock.Push();
         }
 
-        public static bool SaveBlock(Block block) {
+        // Add block to blockchain
+        public static bool PushBlock(Block block) {
             byte[] hash = block.BlockHeader.Hash();
-            byte[] key = MakeKey(blockPrefix, hash);
+            byte[] key = Utils.BuildKey("b", hash);
             
+            // Save block
             DB.Put(key, block.Serialize());
+            
+            // Define LastHash
+            DB.Put(Utils.BuildKey("lh"), hash);
+            
+            // Increment height
+            DB.Put(Utils.BuildKey("h"), BitConverter.GetBytes(Height+1));
+            
             return true;
         }
-
-        private static byte[] MakeKey(byte[] keyPrefix, byte[] hash) {
-            byte[] key = new byte[hash.Length + keyPrefix.Length];
-            uint i = 0;
-            for (; i < keyPrefix.Length; i++) {
-                key[i] = keyPrefix[i];
-            }
-            for (uint j = 0; j < hash.Length; j++) {
-                key[i] = hash[j];
-                i++;
-            }
-
-            return key;
-        }
-        
         private static uint DeserializeUint(byte[] data, ref uint offset) {
             byte[] bytes = new byte[4];
             Array.Copy(data, offset, bytes, 0, 4);

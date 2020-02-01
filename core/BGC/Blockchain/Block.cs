@@ -88,8 +88,8 @@ namespace BGC.Blockchain {
             return serialized.ToArray();
         }
 
-        public bool Save() {
-            return Blockchain.SaveBlock(this);
+        public bool Push() {
+            return Blockchain.PushBlock(this);
         }
 
         public byte[] HashContracts() {
