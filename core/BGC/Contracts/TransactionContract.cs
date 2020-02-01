@@ -73,10 +73,6 @@ namespace BGC.Contracts {
             PlayerTwoSignature = playerTwoSignature ?? new byte[64];
         }
 
-        public byte[] Serialize(ContractHelper.SerializationType serializationType = ContractHelper.SerializationType.Complete) {
-            throw new NotImplementedException();
-        }
-
         public bool Validate() {
             throw new NotImplementedException();
         }
@@ -89,8 +85,8 @@ namespace BGC.Contracts {
             throw new NotImplementedException();
         }
 
-        public byte[] PartialSerialize() {
-            var serialized = new List<byte>();
+        public byte[] Serialize(ContractHelper.SerializationType serializationType = ContractHelper.SerializationType.Complete) {
+            List<byte> serialized = new List<byte>();
             
             // Append version
             serialized.Add(Version);
@@ -112,30 +108,24 @@ namespace BGC.Contracts {
             
             // Append player one nonce
             serialized.AddRange(BitConverter.GetBytes(PlayerOneNonce));
+            
+            if (serializationType == ContractHelper.SerializationType.NoSig) return serialized.ToArray();
+
             // Append player one signature
             serialized.AddRange(PlayerOneSignature);
             
+            // Append player two nonce
+            serialized.AddRange(BitConverter.GetBytes(PlayerTwoNonce));
+            
+            if (serializationType == ContractHelper.SerializationType.Partial) return serialized.ToArray();
+            
+            // Append player two signature
+            serialized.AddRange(PlayerTwoSignature);
+
             return serialized.ToArray();
         }
 
-        public byte[] Serialize() {
-            List<byte> partial = PartialSerialize().ToList();
-            
-            // Append player two nonce
-            partial.AddRange(BitConverter.GetBytes(PlayerTwoNonce));
-            // Append player two signature
-            partial.AddRange(PlayerTwoSignature);
-
-            return partial.ToArray();
-        }
-
-        public byte[] PartialSign() {
-            throw new NotImplementedException();
-        }
         
-        public bool Sign(byte[] privateKey) {
-            throw new NotImplementedException();
-        }
         public new byte GetType() {
             return Type;
         }
