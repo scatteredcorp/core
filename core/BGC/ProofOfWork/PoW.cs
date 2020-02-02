@@ -7,7 +7,7 @@ using BGC.Blockchain;
 
 namespace BGC.ProofOfWork {
     public class PoW {
-        public const int Difficulty = 10;
+        public const int Difficulty = 20;
 
         public Block Block;
         public BigInteger Target = 1;

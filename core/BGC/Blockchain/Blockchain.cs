@@ -26,7 +26,6 @@ namespace BGC.Blockchain {
                 LastHash = DB.Get(Utils.BuildKey("lh"));
                 
                 Height = BitConverter.ToUInt32(DB.Get(Utils.BuildKey("h")));
-                Console.Write("here");
                 
                 byte[] blockBytes = DB.Get(Utils.BuildKey("b", LastHash));
                 Block block = DeserializeBlock(blockBytes);
@@ -61,7 +60,6 @@ namespace BGC.Blockchain {
 
             // Set last hash
             LastHash = hash;
-            Height++;
             
             // Store block data
             genesisBlock.Push();
@@ -77,9 +75,10 @@ namespace BGC.Blockchain {
             
             // Define LastHash
             DB.Put(Utils.BuildKey("lh"), hash);
-            
+            LastHash = hash;
+            Height++;
             // Increment height
-            DB.Put(Utils.BuildKey("h"), BitConverter.GetBytes(Height+1));
+            DB.Put(Utils.BuildKey("h"), BitConverter.GetBytes(Height));
             
             return true;
         }

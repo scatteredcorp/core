@@ -69,7 +69,8 @@ namespace BGC.Contracts {
                     break;
 
                 case (byte) ContractType.TransactionContract:
-                    throw new NotImplementedException();
+                    (result, size) = DeserializeTransactionContract(contract, offset);
+                    break;
                 
                 default:
                     throw new InvalidDataException("Contract type is not valid.");
@@ -212,6 +213,56 @@ namespace BGC.Contracts {
             byte[] signature = DeserializeSignature(data, ref offset);
             
             return (new ThrowContract(fee, gameHash, x, z, throwNonce, nonce, signature), offset);
+        }
+
+        private static (TransactionContract, uint) DeserializeTransactionContract(byte[] data, uint offset = 0) {
+            // Contract version
+            byte version = data[offset];
+            offset++;
+            
+            // Contract type
+            byte contractType = data[1];
+            offset++;
+            
+            // Fee
+            Placement fee = DeserializePlacement(data, ref offset);
+
+            // Player one placement
+            Placement playerOnePlacement= DeserializePlacement(data, ref offset);
+
+            // Player two placement
+            Placement playerTwoPlacement = DeserializePlacement(data, ref offset);
+
+            // Player one pubkey hash
+            byte[] pKeyHashOne = DeserializeAddress(data, ref offset);
+
+            // Player two pubkey hash
+            byte[] pKeyHashTwo = DeserializeAddress(data, ref offset);
+
+            // Player two nonce
+            uint playerOneNonce = DeserializeNonce(data, ref offset);
+
+            if (offset == data.Length) {
+                // NoSig deserialization
+                return (new TransactionContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, 0, null, null), offset);
+            }
+            
+            // Signature player one
+            byte[] signatureOne = DeserializeSignature(data, ref offset);
+
+            // Player one nonce
+            uint playerTwoNonce = DeserializeNonce(data, ref offset);
+            
+            if (offset == data.Length) {
+                // PartialSign deserialization
+                return (new TransactionContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerTwoNonce, signatureOne, null), offset);
+            }
+            
+            // Signature player two
+            byte[] signatureTwo = DeserializeSignature(data, ref offset);
+            
+            TransactionContract contract = new TransactionContract(fee, playerOnePlacement, playerTwoPlacement, pKeyHashOne, pKeyHashTwo, playerOneNonce, playerTwoNonce, signatureOne, signatureTwo);
+            return (contract, offset);
         }
     }
 }

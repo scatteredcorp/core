@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using BGC.Base58;
+using LevelDB;
 using Secp256k1Net;
 
 namespace BGC {
@@ -206,5 +207,5 @@ namespace BGC {
         public static byte[] BuildKey(string prefix, byte[] hash = null) {
             return ConcatBytes(Encoding.ASCII.GetBytes(prefix), hash);
         }
-	}
+    }
 }
