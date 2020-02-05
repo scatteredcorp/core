@@ -10,7 +10,7 @@ namespace BGC.Network
 {
     class Listener
     {
-        public Queue<(byte[], IPEndPoint)> IncomingQueue;
+        public Queue<(List<byte[]>, IPEndPoint)> IncomingQueue;
 
         private Thread listenerThread;
 
@@ -27,7 +27,7 @@ namespace BGC.Network
 
         public Listener(int port, int maxClientsQueue, int serverUpdateInterval = 50)
         {
-            IncomingQueue = new Queue<(byte[], IPEndPoint)>();
+            IncomingQueue = new Queue<(List<byte[]>, IPEndPoint)>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
@@ -91,25 +91,34 @@ namespace BGC.Network
                     Socket socket = tcpClient.Client;
 
                     Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
+                    Logger.Debug("Connected to " + socket.RemoteEndPoint.ToString());
 
                     buffer = new byte[256];
-                    //socket.Receive(buffer);
-                    
-                    int recv;
-                    do
+
+                    // Read first packet to know the expected size
+
+                    List<byte[]> payload = new List<byte[]>();
+                    int recv = socket.Receive(buffer);
+
+                    UInt32 expectedSize = BitConverter.ToUInt32(buffer, sizeof(Message.MAGIC) + sizeof(Message.COMMAND)) + Message.MessageStructureSize;
+
+                    payload.Add(buffer);
+
+                    Logger.Log("Received header bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+
+                    while (recv < expectedSize)
                     {
                         recv = socket.Receive(buffer);
-                        Console.WriteLine(
-                            Encoding.ASCII.GetString(buffer, 0, recv));
-                        Console.WriteLine(recv);
-                    } while (recv == 256);
 
-                    Console.WriteLine("hello");
-                    
-                    IncomingQueue.Enqueue((buffer, socket.RemoteEndPoint as IPEndPoint));
+                        Logger.Log("Received bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+
+                        payload.Add(buffer);
+                    }
+
+                    IncomingQueue.Enqueue((payload, socket.RemoteEndPoint as IPEndPoint));
 
                     tcpClient.Close();
-
+                    
                     Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);
                 }
 
