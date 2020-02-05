@@ -18,14 +18,28 @@ namespace BGC.Blockchain {
         public static uint Height { get; private set; }
         public static DB DB { get; private set; } = null;
 
+        public static byte[] LastTarget() {
+
+            if (Height < Consensus.Mining.AdjustDifficultyBlocks) {
+                return Consensus.Mining.MaxTarget;
+            }
+            
+            byte[] blockBytes = DB.Get(Utils.BuildKey("b", LastHash));
+            Block block = DeserializeBlock(blockBytes);
+            return block.BlockHeader.Target;
+        }
+        
         public static void Resume() {
             // Check if blockchain exists
             try {
                 Options options = new Options{CreateIfMissing = false};
                 DB = new DB(options, dbLocation);
                 LastHash = DB.Get(Utils.BuildKey("lh"));
+                byte[] h = DB.Get(Utils.BuildKey("h"));
+
+                Console.WriteLine(h.ToString());
                 
-                Height = BitConverter.ToUInt32(DB.Get(Utils.BuildKey("h")));
+                Height = BitConverter.ToUInt32(h);
                 
                 byte[] blockBytes = DB.Get(Utils.BuildKey("b", LastHash));
                 Block block = DeserializeBlock(blockBytes);
@@ -119,7 +133,7 @@ namespace BGC.Blockchain {
             byte[] previousHash = DeserializeHash(bytes, ref offset);
             byte[] merkleRoot = DeserializeHash(bytes, ref offset);
             uint timestamp = DeserializeUint(bytes, ref offset);
-            uint target = DeserializeUint(bytes, ref offset);
+            byte[] target = DeserializeHash(bytes, ref offset);
             uint nonce = DeserializeUint(bytes, ref offset);
 
             return new BlockHeader(version, previousHash, merkleRoot, timestamp, target, nonce);

@@ -21,17 +21,17 @@ namespace BGC.Blockchain {
         public byte[] PreviousHash;    // 32 bytes
         public byte[] MerkleRoot;      // 32 bytes
         public uint Timestamp;
-        public uint DifficultyTarget;
+        public byte[] Target; // 32 bytes
         public uint Nonce;
 
-        public BlockHeader(byte version, byte[] previousHash, byte[] merkleRoot, uint timestamp, uint difficultyTarget, uint nonce) {
+        public BlockHeader(byte version, byte[] previousHash, byte[] merkleRoot, uint timestamp, byte[] target, uint nonce) {
             Version = version;
             
             PreviousHash = previousHash;
             
             MerkleRoot = merkleRoot;
             Timestamp = timestamp;
-            DifficultyTarget = difficultyTarget;
+            Target = target;
             Nonce = nonce;
         }
 
@@ -41,7 +41,7 @@ namespace BGC.Blockchain {
             serialized.AddRange(PreviousHash);
             serialized.AddRange(MerkleRoot);
             serialized.AddRange(BitConverter.GetBytes(Timestamp));
-            serialized.AddRange(BitConverter.GetBytes(DifficultyTarget));
+            serialized.AddRange(Target);
             serialized.AddRange(BitConverter.GetBytes(Nonce));
             
             return serialized.ToArray();
@@ -112,7 +112,7 @@ namespace BGC.Blockchain {
         
         public static Block Genesis(TransactionContract coinbase) {
             uint unixTimestamp = (uint)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            BlockHeader header = new BlockHeader(Version, new byte[32], new byte[32], unixTimestamp, 0, 0); 
+            BlockHeader header = new BlockHeader(Version, new byte[32], new byte[32], unixTimestamp, new byte[32], 0); 
             
             Block block = new Block(header, new IContract[]{coinbase});
             
