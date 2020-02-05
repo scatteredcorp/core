@@ -14,6 +14,7 @@ namespace BGC.Network
             SocketException = 1,
             NullException = 2,
             SocketClosedException = 3,
+            InvalidMessageSizeException = 4,
             Pending = -1
         }
 
@@ -33,6 +34,11 @@ namespace BGC.Network
 
         public static void SendData(IPEndPoint target, byte[] data, ref ReturnCode returnCode)
         {
+            if (!IsMsgComplete(data)) {
+                returnCode = ReturnCode.InvalidMessageSizeException;
+                return;
+            }
+
             Parameters p = new Parameters(target, data, ref returnCode);
 
             Thread thread = new Thread(new ParameterizedThreadStart(SendDataSync));
@@ -78,6 +84,13 @@ namespace BGC.Network
             {
                 
             }
+        }
+
+        private static bool IsMsgComplete(byte[] message)
+        {
+            return BitConverter.ToUInt32(message, sizeof(Message.MAGIC) + sizeof(Message.COMMAND)) // Payload size
+                + Message.MessageStructureSize  // Minimal structure size
+                == message.Length;              // Total size
         }
     }
 }

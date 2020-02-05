@@ -32,7 +32,12 @@ namespace BGC.Network
             SendVersion = 4,
 
             GetHeaders = 5,
-            SendHeaders = 6
+            SendHeaders = 6,
+
+            GetMempool = 7,
+            SendMempool = 8,
+
+            GetContracts = 9
         }
     }
 }
