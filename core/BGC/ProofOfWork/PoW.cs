@@ -7,14 +7,14 @@ using BGC.Blockchain;
 
 namespace BGC.ProofOfWork {
     public class PoW {
-        public const int Difficulty = 10;
+        public const int Difficulty = 20;
 
         public Block Block;
-        public BigInteger Target = 1;
+        public byte[] Target;
 
         public PoW(Block block) {
             Block = block;
-            Target = Target << 256 - Difficulty;
+            Target = Consensus.Mining.Target();
         }
 
         private byte[] InitData(uint nonce) {
@@ -22,7 +22,7 @@ namespace BGC.ProofOfWork {
             data.AddRange(Block.BlockHeader.PreviousHash);
             data.AddRange(Block.HashContracts());
             data.AddRange(BitConverter.GetBytes(nonce));
-            data.AddRange(Target.ToByteArray());
+            data.AddRange(Target);
 
             return data.ToArray();
         }
@@ -41,10 +41,10 @@ namespace BGC.ProofOfWork {
                 // SHA256 returns an unsigned byte array
                 // But BigInteger only accepts signed byte arrays
                 // Append zero-byte to make it positive
-                BigInteger intHash = new BigInteger(hash.Concat(new byte[] { 0 }).ToArray());
-
+                BigInteger intHash = new BigInteger(hash, true);
+                BigInteger target = new BigInteger(Target, true);
                 // If block hash is below target, it is valid
-                if (intHash.CompareTo(Target) == -1) {
+                if (intHash.CompareTo(target) == -1) {
                     break;
                 }
 
