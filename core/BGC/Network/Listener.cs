@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace BGC.Network
 {
     class Listener
     {
-        public Queue<(byte[], IPAddress)> IncomingQueue;
+        public Queue<(List<byte[]>, IPEndPoint)> IncomingQueue;
 
         private Thread listenerThread;
 
@@ -20,9 +23,11 @@ namespace BGC.Network
         private int maxClientsQueue;
         public int MaxClientsQueue => maxClientsQueue;
 
-        public Listener(int port, int maxClientsQueue)
+        private int updateInterval;
+
+        public Listener(int port, int maxClientsQueue, int serverUpdateInterval = 50)
         {
-            IncomingQueue = new Queue<(byte[], IPAddress)>();
+            IncomingQueue = new Queue<(List<byte[]>, IPEndPoint)>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
@@ -30,6 +35,7 @@ namespace BGC.Network
 
             this.port = port;
             this.maxClientsQueue = maxClientsQueue;
+            updateInterval = serverUpdateInterval;
         }
 
         public void StartListening()
@@ -66,35 +72,63 @@ namespace BGC.Network
                 Logger.Log("Successfully started the TCP server on port " + port, Logger.LoggingLevels.HighLogging);
 
                 // Buffer for incoming data
-                byte[] buffer = new byte[256];
+                byte[] buffer;
 
                 while (keepListening)
                 {
                     Logger.Log("Waiting for an incoming connection...", Logger.LoggingLevels.HighLogging);
 
-                    TcpClient tcpClient = tcpServer.AcceptTcpClient();
-
-                    Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
-
-                    NetworkStream stream = tcpClient.GetStream();
-
-                    int i;
-
-                    while ((i = stream.Read(buffer, 0, buffer.Length)) != 0)
+                    while (keepListening && !tcpServer.Pending())
                     {
-                        Logger.Log("Received data...", Logger.LoggingLevels.Debug);
-                        IncomingQueue.Enqueue((buffer, ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address));
+                        Thread.Sleep(updateInterval);
                     }
 
-                    tcpClient.Close();
+                    if (!keepListening)
+                        break;
 
+                    TcpClient tcpClient = tcpServer.AcceptTcpClient();
+
+                    Socket socket = tcpClient.Client;
+
+                    Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
+                    Logger.Debug("Connected to " + socket.RemoteEndPoint.ToString());
+
+                    buffer = new byte[256];
+
+                    // Read first packet to know the expected size
+
+                    List<byte[]> payload = new List<byte[]>();
+                    int recv = socket.Receive(buffer);
+
+                    UInt32 expectedSize = BitConverter.ToUInt32(buffer, sizeof(Message.MAGIC) + sizeof(Message.COMMAND)) + Message.MessageStructureSize;
+
+                    payload.Add(buffer);
+
+                    Logger.Log("Received header bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+
+                    while (recv < expectedSize)
+                    {
+                        recv = socket.Receive(buffer);
+
+                        Logger.Log("Received bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+
+                        payload.Add(buffer);
+                    }
+
+                    IncomingQueue.Enqueue((payload, socket.RemoteEndPoint as IPEndPoint));
+
+                    tcpClient.Close();
+                    
                     Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);
                 }
 
                 Logger.Log("Listener: received stop request; stopping...", Logger.LoggingLevels.HighLogging);
             }
             catch (SocketException e) {
-                Logger.Log("SocketException: " + e, Logger.LoggingLevels.MinimalLogging);
+                Logger.Log("SocketException while listening: " + e, Logger.LoggingLevels.MinimalLogging);
+            }
+            catch (IOException e) {
+                Logger.Log("IOException while listening: " + e, Logger.LoggingLevels.MinimalLogging);
             }
             finally {
                 // Register the listener as stopped, so it doesn't get stuck in case of errors
