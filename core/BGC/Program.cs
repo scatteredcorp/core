@@ -1,4 +1,3 @@
-﻿
 namespace BGC {
     class BGC {
         static void Main(string[] args) {
