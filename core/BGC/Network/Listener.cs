@@ -10,7 +10,7 @@ namespace BGC.Network
 {
     class Listener
     {
-        public Queue<(List<byte[]>, IPEndPoint)> IncomingQueue;
+        public Queue<NetworkMessage> IncomingQueue;
 
         private Thread listenerThread;
 
@@ -27,7 +27,7 @@ namespace BGC.Network
 
         public Listener(int port, int maxClientsQueue, int serverUpdateInterval = 50)
         {
-            IncomingQueue = new Queue<(List<byte[]>, IPEndPoint)>();
+            IncomingQueue = new Queue<NetworkMessage>();
 
             listenerThread = new Thread(new ThreadStart(listen));
 
@@ -114,8 +114,7 @@ namespace BGC.Network
 
                         payload.Add(buffer);
                     }
-
-                    IncomingQueue.Enqueue((payload, socket.RemoteEndPoint as IPEndPoint));
+                    IncomingQueue.Enqueue(new NetworkMessage(payload, socket.RemoteEndPoint as IPEndPoint));
                     tcpClient.Close();
 
                     Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);

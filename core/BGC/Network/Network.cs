@@ -74,6 +74,7 @@ namespace BGC.Network
             {
                 p.returnCode = ReturnCode.SocketClosedException;
                 Logger.Log("Socket unexpectedly closed while sending data to " + p.target, Logger.LoggingLevels.MinimalLogging);
+                Logger.Debug("ObjectDisposedException: " + e);
             }
             catch (System.ArgumentNullException)
             {
