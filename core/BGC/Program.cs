@@ -1,6 +1,6 @@
 namespace BGC {
-    class BGC {
-        static void Main(string[] args) {
+    internal static class BGC {
+        private static void Main(string[] args) {
             CLI.CLI.Run(args);
         }
     }

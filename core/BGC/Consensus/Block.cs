@@ -4,10 +4,9 @@ namespace BGC.Consensus {
 	public class Block {
 
 		// Check if block size is <= BlockSize
-		public static bool ValidateSize(Block block) {
-			throw new NotImplementedException();
-			return false;
-		}
-		
-	}
+		public static bool ValidateSize(Blockchain.Block block) {
+            byte[] serialized = block.Serialize();
+            return serialized.Length <= Consensus.BlockSize;
+        }
+    }
 }

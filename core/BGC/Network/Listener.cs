@@ -116,9 +116,8 @@ namespace BGC.Network
                     }
 
                     IncomingQueue.Enqueue((payload, socket.RemoteEndPoint as IPEndPoint));
-
                     tcpClient.Close();
-                    
+
                     Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);
                 }
 

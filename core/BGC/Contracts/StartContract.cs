@@ -24,10 +24,10 @@ namespace BGC.Contracts {
     /// 25 bytes : Player two pubkey hash (address)
     ///
     /// 4 bytes : Player one nonce
-    /// 64 bytes : Player one signature
+    /// 65 bytes : Player one signature
     ///
     /// 4 bytes : Player two nonce
-    /// 64 bytes : Player two signature 
+    /// 65 bytes : Player two signature 
     /// </summary>
     public class StartContract : IContractMultiSig {
         public const byte Version = 1;
@@ -77,9 +77,12 @@ namespace BGC.Contracts {
 
         public bool Validate() {
             // TODO Validate contract deeper
-            if (!Utils.ValidateAddress(PlayerOneSignature) || !Utils.ValidateAddress(PlayerTwoPubKeyHash)) {
+            if (!Utils.ValidateAddress(PlayerOnePubKeyHash) || !Utils.ValidateAddress(PlayerTwoPubKeyHash)) {
                 return false;
             }
+
+            if (!Consensus.Contracts.ValidateSignature(PlayerOneSignature)) return false;
+            if (!Consensus.Contracts.ValidateSignature(PlayerTwoSignature)) return false;
 
             return true;
         }

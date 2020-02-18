@@ -64,6 +64,7 @@ namespace BGC.Tests.TestWallet {
             foreach ((string priv, string address) in keys) {
                 byte[] privateKey = Utils.FromHex(priv);
                 BGC.Wallet.Wallet wallet = new BGC.Wallet.Wallet(privateKey);
+                wallet.SetVersionByte(0x00);
                 byte[] a = wallet.Address();
                 
                 Assert.Equal(a, Base58.Base58Encode.Decode(address));
@@ -95,6 +96,7 @@ namespace BGC.Tests.TestWallet {
             foreach ((string priv, string address) in keys) {
                 byte[] privateKey = Utils.FromHex(priv);
                 BGC.Wallet.Wallet wallet = new BGC.Wallet.Wallet(privateKey);
+                wallet.SetVersionByte(0x00);
 
                 Assert.Equal(wallet.EncodedAddress(), address);
             }

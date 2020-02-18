@@ -183,9 +183,9 @@ namespace BGC {
 
 		public static (byte[], bool) SignData(byte[] hash, byte[] privateKey) {
 			using (Secp256k1 secp256k1 = new Secp256k1()) {
-				byte[] sig = new byte[64];
-				bool valid = secp256k1.Sign(sig, hash, privateKey);
-				return (sig, valid);
+				byte[] sig = new byte[Secp256k1.UNSERIALIZED_SIGNATURE_SIZE];
+				bool valid = secp256k1.SignRecoverable(sig, hash, privateKey);
+                return (sig, valid);
 			}
 		}
 
@@ -207,5 +207,7 @@ namespace BGC {
         public static byte[] BuildKey(string prefix, byte[] hash = null) {
             return ConcatBytes(Encoding.ASCII.GetBytes(prefix), hash);
         }
+        
+        
     }
 }

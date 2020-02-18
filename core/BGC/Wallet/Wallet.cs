@@ -12,7 +12,7 @@ namespace BGC.Wallet
 {
     public class Wallet {
 
-        private byte Version = 0x00;
+        private byte Version = 0x8a;
 
         public byte[] PrivateKey { get; }
         public byte[] PublicKey { get; }
@@ -50,7 +50,7 @@ namespace BGC.Wallet
             // Step 5 & 6: SHA256 twice
             hash = sha526.ComputeHash(versioned);
             hash = sha526.ComputeHash(hash);
-
+            
             // Step 7 & 8: add trimmed hash at the end of the versioned hash
             byte[] address = new byte[ripemdHash.Length + 5];
             {

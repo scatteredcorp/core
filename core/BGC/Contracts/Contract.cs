@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Xml.Schema;
 using BGC.Marbles;
+using Secp256k1Net;
 
 namespace BGC.Contracts {
 
@@ -123,9 +124,9 @@ namespace BGC.Contracts {
         }
 
         private static byte[] DeserializeSignature(byte[] data, ref uint offset) {
-            byte[] signature = new byte[64];
-            Array.Copy(data, offset, signature, 0, 64);
-            offset += 64;
+            byte[] signature = new byte[Secp256k1.UNSERIALIZED_SIGNATURE_SIZE];
+            Array.Copy(data, offset, signature, 0, 65);
+            offset += Secp256k1.UNSERIALIZED_SIGNATURE_SIZE;
             return signature;
         }
 

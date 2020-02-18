@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Security.Cryptography;
 using BGC.Base58;
+using Secp256k1Net;
 
 namespace BGC.Contracts {
     
@@ -21,7 +22,7 @@ namespace BGC.Contracts {
     /// 1 byte : Throw Nonce (Sequence of throws in game)
     /// 
     /// 4 bytes : Nonce (Player nonce to prevent double-spend)
-    /// 64 bytes : Signature
+    /// 65 bytes : Signature
     /// </summary>
     public class ThrowContract : IContract {
         public const byte Version = 1;
@@ -50,7 +51,7 @@ namespace BGC.Contracts {
             ThrowNonce = throwNonce;
             Nonce = nonce;
             
-            Signature = signature ?? new byte[64];
+            Signature = signature ?? new byte[Secp256k1.UNSERIALIZED_SIGNATURE_SIZE];
         }
 
         public bool Validate() {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Xml;
 using BGC.Marbles;
+using Secp256k1Net;
 
 namespace BGC.Contracts {
 
@@ -20,10 +21,10 @@ namespace BGC.Contracts {
     /// 25 bytes : Player two pubkey hash (address)
     ///
     /// 4 bytes : Player one nonce
-    /// 64 bytes : Player one signature
+    /// 65 bytes : Player one signature
     ///
     /// 4 bytes : Player two nonce
-    /// 64 bytes : Player two signature
+    /// 65 bytes : Player two signature
     /// </summary>
     public class TransactionContract : IContract {
         public const byte Version = 1;
@@ -69,8 +70,8 @@ namespace BGC.Contracts {
             PlayerOneNonce = playerOneNonce;
             PlayerTwoNonce = playerTwoNonce;
             
-            PlayerOneSignature = playerOneSignature ?? new byte[64];
-            PlayerTwoSignature = playerTwoSignature ?? new byte[64];
+            PlayerOneSignature = playerOneSignature ?? new byte[Secp256k1.UNSERIALIZED_SIGNATURE_SIZE];
+            PlayerTwoSignature = playerTwoSignature ?? new byte[Secp256k1.UNSERIALIZED_SIGNATURE_SIZE];
         }
 
         public bool Validate() {
