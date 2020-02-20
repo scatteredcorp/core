@@ -12,8 +12,8 @@ namespace BGC.Contracts {
     public interface IContract {
         byte[] Serialize(ContractHelper.SerializationType serializationType);
         bool Validate();
-        
-        byte GetType();
+
+        byte Type { get; }
         
         bool Sign(byte[] privateKey, uint nonce);
 

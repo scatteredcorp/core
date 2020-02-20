@@ -28,7 +28,7 @@ namespace BGC.Contracts {
     /// </summary>
     public class TransactionContract : IContract {
         public const byte Version = 1;
-        public const byte Type = (byte) ContractType.TransactionContract;
+        public byte Type { get; } = (byte) ContractType.TransactionContract;
 
         public Placement Fee { get; }
         
@@ -124,11 +124,6 @@ namespace BGC.Contracts {
             serialized.AddRange(PlayerTwoSignature);
 
             return serialized.ToArray();
-        }
-
-        
-        public new byte GetType() {
-            return Type;
         }
     }
 

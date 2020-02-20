@@ -31,7 +31,7 @@ namespace BGC.Contracts {
     /// </summary>
     public class StartContract : IContractMultiSig {
         public const byte Version = 1;
-        public const byte Type = (byte) ContractType.StartContract;
+        public byte Type { get; } = (byte) ContractType.StartContract;
         
         // Player One pays for fee
         public Placement Fee { get; }
@@ -189,10 +189,6 @@ namespace BGC.Contracts {
             Console.WriteLine("Player Two Nonce: {0}", PlayerTwoNonce);
             Console.WriteLine("Player Two Sig: {0}", string.Join(" ", PlayerTwoSignature));
 
-        }
-
-        public new byte GetType() {
-            return Type;
         }
     }
 

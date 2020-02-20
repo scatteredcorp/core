@@ -26,7 +26,7 @@ namespace BGC.Contracts {
     /// </summary>
     public class ThrowContract : IContract {
         public const byte Version = 1;
-        public const byte Type = (byte) ContractType.ThrowContract;
+        public byte Type { get; } = (byte) ContractType.ThrowContract;
 
         public Placement Fee { get; }
         
@@ -57,7 +57,7 @@ namespace BGC.Contracts {
         public bool Validate() {
             throw new NotImplementedException();
         }
-
+        
         public void PrettyPrint() {
             Console.WriteLine("Version: {0}", Version);
             Console.WriteLine("Type: {0}", Type);
@@ -123,9 +123,6 @@ namespace BGC.Contracts {
 
             Signature = sig;
             return true;
-        }
-        public new byte GetType() {
-            return Type;
         }
     }
 }
