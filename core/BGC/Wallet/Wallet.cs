@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BGC.Base58;
+using BGC.Marbles;
 using Secp256k1Net;
 
 namespace BGC.Wallet
@@ -66,6 +67,10 @@ namespace BGC.Wallet
             }
 
             return address;
+        }
+        
+        public List<Marbles.Marble> GetInventory() {
+            return null;
         }
 
         public string EncodedAddress() {

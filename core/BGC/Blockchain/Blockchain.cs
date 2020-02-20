@@ -18,6 +18,10 @@ namespace BGC.Blockchain {
         public static uint Height { get; private set; }
         public static DB DB { get; private set; } = null;
 
+        public static void RedindexWorldState() {
+            return;
+        }
+        
         public static byte[] LastTarget() {
 
             if (Height < Consensus.Mining.AdjustDifficultyBlocks) {

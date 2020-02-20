@@ -10,7 +10,7 @@ namespace BGC.Blockchain {
             Pool.Add(contract);
         }
 
-        public static void RemoveContracts(IContract[] contracts) {
+        public static void RemoveContracts(IEnumerable<IContract> contracts) {
             foreach (IContract c in contracts) {
                 Pool.Remove(c);
             }
