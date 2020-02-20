@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Xml;
+using BGC.Base58;
 using BGC.Marbles;
 using Secp256k1Net;
 
@@ -26,7 +27,7 @@ namespace BGC.Contracts {
     /// 4 bytes : Player two nonce
     /// 65 bytes : Player two signature
     /// </summary>
-    public class TransactionContract : IContract {
+    public class TransactionContract : IContractMultiSig {
         public const byte Version = 1;
         public byte Type { get; } = (byte) ContractType.TransactionContract;
 
@@ -39,11 +40,11 @@ namespace BGC.Contracts {
         public byte[] PlayerTwoPubKeyHash { get; }
         
 
-        public uint PlayerOneNonce { get; }
-        public uint PlayerTwoNonce { get; }
-        
-        public byte[] PlayerOneSignature { get; }
-        public byte[] PlayerTwoSignature { get; }
+        public uint PlayerOneNonce { get; set; }
+        public uint PlayerTwoNonce { get; set; }
+
+        public byte[] PlayerOneSignature { get; set; }
+        public byte[] PlayerTwoSignature { get; set; }
 
         public TransactionContract(
             Placement fee, 
@@ -78,12 +79,58 @@ namespace BGC.Contracts {
             throw new NotImplementedException();
         }
 
-        public bool Sign(byte[] privateKey, uint nonce) {
-            throw new NotImplementedException();
+        public bool PartialSign(byte[] privateKey, uint playerOneNonce) {
+            PlayerOneNonce = playerOneNonce;
+            byte[] serialized = Serialize(ContractHelper.SerializationType.NoSig);
+            
+            // Compute signature using serialized byte array
+            SHA256 sha256 = new SHA256Managed();
+            byte[] hash = sha256.ComputeHash(serialized);
+
+            (byte[] sig, bool valid) = Utils.SignData(hash, privateKey);
+            if (!valid) {
+                return false;
+            }
+
+            PlayerOneSignature = sig;
+
+            return true;
+        }
+
+        public bool Sign(byte[] privateKey, uint playerTwoNonce) {
+            PlayerTwoNonce = playerTwoNonce;
+            byte[] serialized = Serialize(ContractHelper.SerializationType.Partial);
+            // Compute signature using serialized byte array
+            SHA256 sha256 = new SHA256Managed();
+            byte[] hash = sha256.ComputeHash(serialized);
+
+            (byte[] sig, bool valid) = Utils.SignData(hash, privateKey);
+            if (!valid) {
+                return false;
+            }
+
+            PlayerTwoSignature = sig;
+            return true;
         }
 
         public void PrettyPrint() {
-            throw new NotImplementedException();
+            Console.WriteLine("Version: {0}", Version);
+            Console.WriteLine("Type: {0}", Type);
+            Console.WriteLine("Fee:");
+            Fee.PrettyPrint();
+            Console.WriteLine("Player One Placement:");
+            PlayerOnePlacement.PrettyPrint();
+            Console.WriteLine("Player Two Placement:");
+            PlayerTwoPlacement.PrettyPrint();
+            
+            Console.WriteLine("Player One Address: {0}", Base58Encode.Encode(PlayerOnePubKeyHash));
+            Console.WriteLine("Player Two Address: {0}", Base58Encode.Encode(PlayerTwoPubKeyHash));
+            
+            Console.WriteLine("Player One Nonce: {0}", PlayerOneNonce);
+            Console.WriteLine("Player One Sig: {0}", string.Join(" ", PlayerOneSignature));
+            
+            Console.WriteLine("Player Two Nonce: {0}", PlayerTwoNonce);
+            Console.WriteLine("Player Two Sig: {0}", string.Join(" ", PlayerTwoSignature));
         }
 
         public byte[] Serialize(ContractHelper.SerializationType serializationType = ContractHelper.SerializationType.Complete) {
