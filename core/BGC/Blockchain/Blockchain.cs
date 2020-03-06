@@ -19,6 +19,7 @@ namespace BGC.Blockchain {
         public static DB DB { get; private set; } = null;
 
         public static void RedindexWorldState() {
+            
             return;
         }
         
@@ -87,7 +88,7 @@ namespace BGC.Blockchain {
         public static bool PushBlock(Block block) {
             byte[] hash = block.BlockHeader.Hash();
             byte[] key = Utils.BuildKey("b", hash);
-            
+
             // Save block
             DB.Put(key, block.Serialize());
             
@@ -95,8 +96,10 @@ namespace BGC.Blockchain {
             DB.Put(Utils.BuildKey("lh"), hash);
             LastHash = hash;
             Height++;
+            
             // Increment height
             DB.Put(Utils.BuildKey("h"), BitConverter.GetBytes(Height));
+            Blockchain.RedindexWorldState();
             
             return true;
         }
