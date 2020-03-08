@@ -47,9 +47,11 @@ namespace BGC.CLI {
 			
 			IPAddress localAddress = IPAddress.Parse(opts.IP);
 			IPEndPoint ip = new IPEndPoint(localAddress, opts.Port);
-
+            
+            byte[] msg = Network.Utils.CreateTextMessage(opts.Data);
+            Console.WriteLine("sending data");
 			Network.Network.ReturnCode code = Network.Network.ReturnCode.Pending;
-			Network.Network.SendData(ip, Encoding.UTF8.GetBytes(opts.Data), ref code);
+			Network.Network.SendData(ip, msg, ref code);
 			Thread.Sleep(5000);
 		}
 		
