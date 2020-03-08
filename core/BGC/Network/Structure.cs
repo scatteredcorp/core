@@ -37,7 +37,9 @@ namespace BGC.Network
             GetMempool = 7,
             SendMempool = 8,
 
-            GetContracts = 9
+            GetContracts = 9,
+
+            TextMessage = 10
         }
     }
 }
