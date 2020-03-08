@@ -37,10 +37,9 @@ namespace BGC.Network
 
         private static void WriteUInt(byte[] target, int startIndex, uint value)
         {
-            for (int i = startIndex, k = 24; k >= 0; i++, k -= 8)
-            {
-                target[i] = (byte) (value >> k);
-            }
+            byte[] n = BitConverter.GetBytes(value);
+            for (int i = 0; i < n.Length; i++)
+                target[startIndex + i] = n[i];
         }
     }
 }
