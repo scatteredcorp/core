@@ -55,7 +55,7 @@ namespace BGC.Contracts {
         }
 
         public bool Validate() {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void PrettyPrint() {
