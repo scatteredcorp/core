@@ -104,7 +104,7 @@ namespace BGC.Network
 
                     payload.Add(buffer);
 
-                    Logger.Log("Received header bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+                    Logger.Log("Received header bytes: " + Encoding.Unicode.GetString(buffer, (int) Message.MessageStructureSize, recv), Logger.LoggingLevels.HighLogging);
 
                     while (recv < expectedSize)
                     {
