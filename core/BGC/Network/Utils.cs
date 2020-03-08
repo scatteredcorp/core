@@ -9,14 +9,14 @@ namespace BGC.Network
     {
         public static byte[] CreateTextMessage(string text, Message.MAGIC targetNetwork = Message.MAGIC.TestNetwork)
         {
-            byte[] r = new byte[Message.MessageStructureSize + text.Length * 2 + 2]; // utf-16 -> 2 bytes / char
             byte[] txt_bytes = Encoding.Unicode.GetBytes(text);
+            byte[] r = new byte[Message.MessageStructureSize + txt_bytes.Length]; // utf-16 -> 2 bytes / char
 
             // Not flexible
             r[0] = (byte) targetNetwork;
             r[1] = (byte) Message.COMMAND.TextMessage;
 
-            WriteUInt(r, 2, (uint) text.Length * 2 + 2);
+            WriteUInt(r, 2, (uint) txt_bytes.Length);
 
             using (SHA256 sha256 = SHA256.Create())
             {

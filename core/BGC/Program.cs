@@ -35,7 +35,7 @@ namespace BGC {
             Console.WriteLine(Utils.ToHex(startContract.Serialize(ContractHelper.SerializationType.Complete)));
 
             var listener = new Network.Listener(12000, 32);
-            listener.StartListening();
+            
         }
     }
 }
