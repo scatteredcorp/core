@@ -32,10 +32,8 @@ namespace BGC {
             startContract.PartialSign(wallet1.PrivateKey, 4);
             startContract.Sign(wallet2.PrivateKey, 8);
             
-            Console.WriteLine(Utils.ToHex(startContract.Serialize(ContractHelper.SerializationType.Complete)));
+            //Console.WriteLine(Utils.ToHex(startContract.Serialize(ContractHelper.SerializationType.Complete)));
 
-            var listener = new Network.Listener(12000, 32);
-            
         }
     }
 }
