@@ -36,7 +36,7 @@ namespace BGC.Network
         {
             if (!IsMsgComplete(data)) {
                 returnCode = ReturnCode.InvalidMessageSizeException;
-                Console.WriteLine("msg incomplete");
+                Console.WriteLine("Message incomplete");
                 //return;
             }
 

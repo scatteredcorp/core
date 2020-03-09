@@ -49,7 +49,6 @@ namespace BGC.CLI {
 			IPEndPoint ip = new IPEndPoint(localAddress, opts.Port);
             
             byte[] msg = Network.Utils.CreateTextMessage(opts.Data);
-            Console.WriteLine("sending data");
 			Network.Network.ReturnCode code = Network.Network.ReturnCode.Pending;
 			Network.Network.SendData(ip, msg, ref code);
 			Thread.Sleep(5000);
