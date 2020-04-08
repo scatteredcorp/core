@@ -227,3 +227,6 @@ project.lock.json
 
 **tmp**
 **wallet.dat**
+core/libsecp256k1.so
+secp256k1
+build
