@@ -5,7 +5,6 @@
         public static Marble Ocean = new Marble(1, "Earth");
         public static Marble Aggie = new Marble(2, "Aggie");
         
-        
         public Marble(byte type, string name) : base(type, name) {}
     }
 }
