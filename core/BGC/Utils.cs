@@ -207,7 +207,6 @@ namespace BGC {
         public static byte[] BuildKey(string prefix, byte[] hash = null) {
             return ConcatBytes(Encoding.ASCII.GetBytes(prefix), hash);
         }
-        
-        
+
     }
 }

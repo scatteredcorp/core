@@ -81,8 +81,8 @@ namespace BGC.Contracts {
                 return false;
             }
 
-            if (!Consensus.Contracts.ValidateSignature(PlayerOneSignature)) return false;
-            if (!Consensus.Contracts.ValidateSignature(PlayerTwoSignature)) return false;
+            if (!Consensus.Contracts.ValidateSignature(this, PlayerTwoSignature, false)) return false;
+            if (!Consensus.Contracts.ValidateSignature(this, PlayerTwoSignature, true)) return false;
 
             return true;
         }
@@ -150,7 +150,7 @@ namespace BGC.Contracts {
             }
 
             PlayerOneSignature = sig;
-
+            
             return true;
         }
 
