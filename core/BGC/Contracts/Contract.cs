@@ -25,7 +25,7 @@ namespace BGC.Contracts {
         bool PartialSign(byte[] privateKey, uint playerOneNonce);
     }
 
-    public enum ContractType {
+    public enum ContractType : byte {
         StartContract,
         ThrowContract,
         TransactionContract
@@ -95,14 +95,16 @@ namespace BGC.Contracts {
             byte numMarbles = contract[offset];
             offset++;
             for (uint i = 0; i < numMarbles; i++) {
-                byte type = contract[offset];
+                Marbles.Type type = (Marbles.Type) contract[offset];
+                offset++;
+                Marbles.Color color = (Marbles.Color) contract[offset];
                 offset++;
 
                 byte[] quantityBytes = new byte[4];
                 Array.Copy(contract, offset, quantityBytes, 0, 4);
                 uint quantity = BitConverter.ToUInt32(quantityBytes);
-            
-                placement.Add(type, quantity);
+
+                placement.Add(type, color, quantity);
                 offset += 4;
             }
 

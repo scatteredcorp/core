@@ -180,11 +180,21 @@ namespace BGC.Contracts {
             
             Placement reward = new Placement();
             Placement empty = new Placement();
-            // TODO : change with actual values based on chain height and marbles' rarity
-            reward.Add(0, 1000);
-            reward.Add(1, 500);
-            reward.Add(2, 100);
-            
+
+            Marble[] marbles = Marbles.Marbles.All;
+
+            for(int i = 0; i < marbles.Length; i++) {
+                if(!marbles[i].Special) {
+                    // If marble is not special, add all available colors except None
+                    foreach (Color color in Enum.GetValues(typeof(Color))) {
+                        if(color != Color.None) reward.Add(marbles[i].Type, color, marbles[i].Quantity());
+                    }
+                    continue;
+                }
+                // If marble is special, do not add any color
+                reward.Add(marbles[i].Type, Color.None, 100);   
+            }
+
             TransactionContract coinbase = new TransactionContract(empty,empty, reward, new byte[25], minerAddress);
             return coinbase;
         }

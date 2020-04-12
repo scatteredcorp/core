@@ -72,6 +72,7 @@ namespace BGC.CLI {
 			// the code that you want to measure comes here
 			watch.Stop();
 			var elapsedMs = watch.ElapsedMilliseconds;
+			Console.WriteLine("Elapsed: " + elapsedMs/1000 + " seconds");
 			StartMining(options);
 		}
 	}

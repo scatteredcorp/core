@@ -18,7 +18,7 @@ namespace BGC.Contracts {
     public sealed class Placement {
         public List<PlacementMarble> Marbles { get; } = new List<PlacementMarble>();
 
-        public void Add(byte type, uint amount) {
+        public void Add(Marbles.Type type, Marbles.Color color, uint amount) {
             // Check if type is already in a placement
             for (byte i = 0; i < Marbles.Count; i++) {
                 if (Marbles[i].Type == type) {
@@ -29,7 +29,7 @@ namespace BGC.Contracts {
             }
 
             // Otherwise, simply add it
-            Marbles.Add(new PlacementMarble(type, amount));
+            Marbles.Add(new PlacementMarble(type, color, amount));
         }
 
         public byte[] Serialize() {
@@ -41,7 +41,8 @@ namespace BGC.Contracts {
             // We append the type byte
             // And also the amount of marbles of this specific type
             for (byte i = 0; i < Marbles.Count; i++) {
-                serialized.Add(Marbles[i].Type);
+                serialized.Add((byte) Marbles[i].Type);
+                serialized.Add((byte) Marbles[i].Color);
                 
                 byte[] amount = BitConverter.GetBytes(Marbles[i].Amount);
                 serialized.AddRange(amount);
@@ -62,11 +63,13 @@ namespace BGC.Contracts {
     
     
     public class PlacementMarble {
-        public byte Type;
+        public Marbles.Type Type;
+        public Marbles.Color Color;
         public uint Amount;
 
-        public PlacementMarble(byte type, uint amount) {
+        public PlacementMarble(Marbles.Type type, Marbles.Color color, uint amount) {
             Type = type;
+            Color = color;
             Amount = amount;
         }
     }

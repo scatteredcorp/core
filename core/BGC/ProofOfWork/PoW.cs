@@ -53,7 +53,5 @@ namespace BGC.ProofOfWork {
             }
             return (nonce, hash);
         }
-
-
     }
 }

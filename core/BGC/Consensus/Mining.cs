@@ -59,6 +59,8 @@ namespace BGC.Consensus {
 				padded[i] = target[i];
 			}
 
+			Console.WriteLine("Adjusted target by " + coef);
+
 			return padded;
 		}
 	}
