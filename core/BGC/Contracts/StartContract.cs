@@ -59,7 +59,6 @@ namespace BGC.Contracts {
             byte[] playerOneSig = null, 
             byte[] playerTwoSig = null
         ) {
-
             Fee = fee;
             
             PlayerOnePlacement = playerOnePlacement;

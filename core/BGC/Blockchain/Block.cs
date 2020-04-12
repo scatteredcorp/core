@@ -20,17 +20,20 @@ namespace BGC.Blockchain {
 
         public byte[] PreviousHash;    // 32 bytes
         public byte[] MerkleRoot;      // 32 bytes
-        public uint Timestamp;
+        public uint Timestamp; // 4 bytes
         public byte[] Target; // 32 bytes
-        public uint Nonce;
+        public uint Nonce; // 4 bytes
 
-        public BlockHeader(byte version, byte[] previousHash, byte[] merkleRoot, uint timestamp, byte[] target, uint nonce) {
+        public BlockHeader(byte version, byte[] previousHash, byte[] merkleRoot, byte[] target, uint timestamp = 0, uint nonce = 0) {
             Version = version;
             
             PreviousHash = previousHash;
-            
             MerkleRoot = merkleRoot;
-            Timestamp = timestamp;
+            if(timestamp == 0) {
+                Timestamp = (uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            } else {
+                Timestamp = timestamp;
+            }
             Target = target;
             Nonce = nonce;
         }
@@ -51,6 +54,10 @@ namespace BGC.Blockchain {
             byte[] serialized = Serialize();
             SHA256 sha256 = new SHA256Managed();
             return sha256.ComputeHash(serialized);
+        }
+
+        public string HashString() {
+            return BitConverter.ToString(Hash()).Replace("-", string.Empty);
         }
     }
     
@@ -77,6 +84,7 @@ namespace BGC.Blockchain {
         public byte[] Serialize() {
             List<byte> serialized = new List<byte>();
             byte[] header = BlockHeader.Serialize();
+
             serialized.AddRange(header);
 
             serialized.AddRange(BitConverter.GetBytes((uint) Contracts.Length));
@@ -108,12 +116,10 @@ namespace BGC.Blockchain {
     };
 
     public static class BlockHelper {
-        private const byte Version = 1;
+        public const byte Version = 1;
         
         public static Block Genesis(TransactionContract coinbase) {
-            uint unixTimestamp = (uint)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            BlockHeader header = new BlockHeader(Version, new byte[32], new byte[32], unixTimestamp, new byte[32], 0); 
-            
+            BlockHeader header = new BlockHeader(Version, new byte[32], new byte[32], Consensus.Mining.Target()); 
             Block block = new Block(header, new IContract[]{coinbase});
             
             return block;

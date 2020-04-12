@@ -7,6 +7,7 @@ using System.Text;
 using BGC.Base58;
 using LevelDB;
 using Secp256k1Net;
+using System.Numerics;
 
 namespace BGC {
 	public static class Utils {
@@ -207,6 +208,16 @@ namespace BGC {
         public static byte[] BuildKey(string prefix, byte[] hash = null) {
             return ConcatBytes(Encoding.ASCII.GetBytes(prefix), hash);
         }
+
+		public static (BigInteger numerator, BigInteger denominator) Fraction(decimal d) {
+			int[] bits = decimal.GetBits(d);
+			BigInteger numerator = (1 - ((bits[3] >> 30) & 2)) *
+								unchecked(((BigInteger)(uint)bits[2] << 64) |
+											((BigInteger)(uint)bits[1] << 32) |
+											(BigInteger)(uint)bits[0]);
+			BigInteger denominator = BigInteger.Pow(10, (bits[3] >> 16) & 0xff);
+			return (numerator, denominator);
+		}
 
     }
 }

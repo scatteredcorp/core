@@ -28,8 +28,6 @@ namespace BGC.CLI {
 
 			byte[] bytes = contract.Serialize(ContractHelper.SerializationType.Complete);
 			
-			Console.WriteLine(bytes.Length);
-			Console.WriteLine(Utils.ToHex(bytes));
 		}
 		
 		[Verb("decodecontract", HelpText = "Decode a contract")]

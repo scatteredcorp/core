@@ -57,7 +57,9 @@ namespace BGC.Contracts {
         }
         
         public static (IContract, uint) DeserializeWithSize(byte[] contract, uint offset = 0) {
+
             byte contractType = contract[1];
+
             IContract result;
             uint size;
             switch (contractType) {
@@ -74,7 +76,7 @@ namespace BGC.Contracts {
                     break;
                 
                 default:
-                    throw new InvalidDataException("Contract type is not valid.");
+                    throw new InvalidDataException("Contract type is not valid: " + contractType);
             }
 
             return (result, size);

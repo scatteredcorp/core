@@ -42,8 +42,6 @@ namespace BGC.Blockchain {
                 LastHash = DB.Get(Utils.BuildKey("lh"));
                 byte[] h = DB.Get(Utils.BuildKey("h"));
 
-                Console.WriteLine(h.ToString());
-                
                 Height = BitConverter.ToUInt32(h);
                 
                 byte[] blockBytes = DB.Get(Utils.BuildKey("b", LastHash));
@@ -67,7 +65,7 @@ namespace BGC.Blockchain {
                 System.Environment.Exit(1);
             }
 
-            TransactionContract coinbase = TransactionHelper.CoinbaseTransaction(rewardAddress, 0);
+            TransactionContract coinbase = TransactionHelper.CoinbaseTransaction(rewardAddress);
             Block genesisBlock = BlockHelper.Genesis(coinbase);
             
             // Compute block hash
@@ -89,8 +87,10 @@ namespace BGC.Blockchain {
             byte[] hash = block.BlockHeader.Hash();
             byte[] key = Utils.BuildKey("b", hash);
 
+
+            byte[] bytes = block.Serialize();
             // Save block
-            DB.Put(key, block.Serialize());
+            DB.Put(key, bytes);
             
             // Define LastHash
             DB.Put(Utils.BuildKey("lh"), hash);
@@ -120,7 +120,8 @@ namespace BGC.Blockchain {
 
         public static Block DeserializeBlock(byte[] bytes) {
             BlockHeader blockHeader = DeserializeBlockHeader(bytes);
-            uint offset = 77; // header size
+
+            uint offset = 105; // header size
 
             uint numContracts = DeserializeUint(bytes, ref offset);
 
@@ -143,7 +144,7 @@ namespace BGC.Blockchain {
             byte[] target = DeserializeHash(bytes, ref offset);
             uint nonce = DeserializeUint(bytes, ref offset);
 
-            return new BlockHeader(version, previousHash, merkleRoot, timestamp, target, nonce);
+            return new BlockHeader(version, previousHash, merkleRoot, target, timestamp, nonce);
         }
     }
 }

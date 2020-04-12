@@ -175,7 +175,9 @@ namespace BGC.Contracts {
     }
 
     public static class TransactionHelper {
-        public static TransactionContract CoinbaseTransaction(byte[] minerAddress, uint chainHeight) {
+        public static TransactionContract CoinbaseTransaction(byte[] minerAddress) {
+            uint chainHeight = Blockchain.Blockchain.Height;
+            
             Placement reward = new Placement();
             Placement empty = new Placement();
             // TODO : change with actual values based on chain height and marbles' rarity

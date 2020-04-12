@@ -12,6 +12,8 @@ namespace BGC.CLI {
         public static void Run(string[] args) {
             cmd = Parser.Default.ParseArguments<
                     BlockchainCmd.InitOptions,
+                    BlockchainCmd.ShowBlocksOptions,
+                    BlockchainCmd.MineOptions,
 
                     ContractsCmd.SignContractOptions,
                     ContractsCmd.DecodeContractOptions,
@@ -26,6 +28,8 @@ namespace BGC.CLI {
                 >(args)
                 // Blockchain related commands
                 .WithParsed<BlockchainCmd.InitOptions>(BlockchainCmd.InitBlockchain)
+                .WithParsed<BlockchainCmd.ShowBlocksOptions>(BlockchainCmd.ShowBlocks)
+                .WithParsed<BlockchainCmd.MineOptions>(BlockchainCmd.Mine)
 
                 // Wallet related commands
                 .WithParsed<WalletCmd.CreateWalletOptions>(WalletCmd.CreateWallet)
@@ -41,6 +45,8 @@ namespace BGC.CLI {
 
                 .WithParsed<NetworkCmd.StartOptions>(NetworkCmd.Start)
                 .WithParsed<NetworkCmd.SendDataOptions>(NetworkCmd.SendData);
+
+
 
         }
 
