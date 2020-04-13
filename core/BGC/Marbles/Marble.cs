@@ -37,7 +37,7 @@ namespace BGC.Marbles {
         public static Marble Ribbon    = new Marble("Ribbon", Type.Ribbon, Rarity.Uncommon);
         public static Marble Stripes   = new Marble("Stripes", Type.Stripes, Rarity.Rare);
         public static Marble Whirlwind = new Marble("Whirlwind", Type.Whirlwind, Rarity.VeryCommon);
-        public static Marble Soccer    = new Marble("Soccer", Type.Soccer, Rarity.Legendary);
+        public static Marble Soccer    = new Marble("Soccer", Type.Soccer, Rarity.Legendary, true);
         
 
         // Define all marbles in an array
@@ -73,6 +73,7 @@ namespace BGC.Marbles {
 
             uint height = Blockchain.Blockchain.Height;
             uint divide = (uint) Math.Pow(2, height / Consensus.Consensus.HalvingCycle); 
+            Console.WriteLine("Halving: {0}", divide);
 
             // Halve reward
             return InitialQuantity() / divide;

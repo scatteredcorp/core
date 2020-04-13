@@ -17,16 +17,16 @@ namespace BGC.Tests.TestContracts {
 
             // Create dummy contract
             Placement fee = new Placement();
-            fee.Add(0, 12);
-            fee.Add(1, 15);
+            fee.Add(Marbles.Type.Stripes, Marbles.Color.Dark, 12);
+            fee.Add(Marbles.Type.Ribbon, Marbles.Color.Dark, 15);
             
             Placement playerOnePlacement = new Placement();
-            playerOnePlacement.Add(2, 64);
-            playerOnePlacement.Add(4, 32);
+            playerOnePlacement.Add(Marbles.Type.Elastic, Marbles.Color.Dark, 64);
+            playerOnePlacement.Add(Marbles.Type.Ribbon, Marbles.Color.Dark, 32);
 
             Placement playerTwoPlacement = new Placement();
-            playerTwoPlacement.Add(5, 122);
-            playerTwoPlacement.Add(8, 2);
+            playerTwoPlacement.Add(Marbles.Type.Soccer, Marbles.Color.None, 122);
+            playerTwoPlacement.Add(Marbles.Type.Whirlwind, Marbles.Color.Dark, 2);
             
             // Dummy wallets
             Wallet.Wallet wallet1 = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());

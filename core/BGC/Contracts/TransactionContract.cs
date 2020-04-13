@@ -192,8 +192,10 @@ namespace BGC.Contracts {
                     continue;
                 }
                 // If marble is special, do not add any color
-                reward.Add(marbles[i].Type, Color.None, 100);   
+                reward.Add(marbles[i].Type, Color.None, marbles[i].Quantity());   
             }
+
+            reward.PrettyPrint();
 
             TransactionContract coinbase = new TransactionContract(empty,empty, reward, new byte[25], minerAddress);
             return coinbase;

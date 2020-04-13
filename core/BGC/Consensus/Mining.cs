@@ -8,8 +8,7 @@ namespace BGC.Consensus {
 	public static class Mining {
 
 		// Difficulty is adjusted every 180 blocks (one hour) 
-		public const uint AdjustDifficultyBlocks = 5; // TODO CHANGE
-		public static readonly byte[] MaxTarget = Utils.FromHex("00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000");
+		public static readonly byte[] MaxTarget = Utils.FromHex("00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0F0000");
 		
 		// Calculate block reward based on height
 		public static Placement Reward(uint blockHeight) {
@@ -19,8 +18,8 @@ namespace BGC.Consensus {
 		public static byte[] Target() {
 			// No need to compute if blockchain height is below 180
 			// Or height is not modulo 180
-			if (Blockchain.Blockchain.Height < AdjustDifficultyBlocks ||
-			    Blockchain.Blockchain.Height % AdjustDifficultyBlocks != 0) {
+			if (Blockchain.Blockchain.Height < Consensus.TargetAdjustment ||
+			    Blockchain.Blockchain.Height % Consensus.TargetAdjustment != 0) {
 				return Blockchain.Blockchain.LastTarget();
 			}
 			
@@ -35,7 +34,7 @@ namespace BGC.Consensus {
 				if (blocks == 0) {
 					endTime = block.BlockHeader.Timestamp;
 				}
-				if (blocks == AdjustDifficultyBlocks-1) {
+				if (blocks == Consensus.TargetAdjustment-1) {
 					startTime = block.BlockHeader.Timestamp;
 					break;
 				}
@@ -43,7 +42,7 @@ namespace BGC.Consensus {
 				blocks++;
 			}
 
-			uint expectedTime = Consensus.BlockTime * AdjustDifficultyBlocks;
+			uint expectedTime = Consensus.BlockTime * Consensus.TargetAdjustment;
 
 			BigInteger lastTarget = new BigInteger(Blockchain.Blockchain.LastTarget(), true);
 

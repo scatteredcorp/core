@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Transactions;
 using BGC.Contracts;
 using BGC.ProofOfWork;
 using LevelDB;
-using Secp256k1Net;
 
 namespace BGC.Blockchain {
     public static class Blockchain {
@@ -25,7 +19,7 @@ namespace BGC.Blockchain {
         
         public static byte[] LastTarget() {
 
-            if (Height < Consensus.Mining.AdjustDifficultyBlocks) {
+            if (Height < Consensus.Consensus.TargetAdjustment) {
                 return Consensus.Mining.MaxTarget;
             }
             
@@ -89,6 +83,8 @@ namespace BGC.Blockchain {
 
 
             byte[] bytes = block.Serialize();
+            Console.WriteLine("Block Size: " + bytes.Length);
+            
             // Save block
             DB.Put(key, bytes);
             

@@ -18,8 +18,8 @@ namespace BGC.Tests.TestContracts {
 		public void TestSerializeStartContract() {
 			 // Create dummy contract
             Placement fee = new Placement();
-            fee.Add(0, 12);
-            fee.Add(1, 15);
+            fee.Add(Marbles.Type.Ribbon, Marbles.Color.Dark, 12);
+            fee.Add(Marbles.Type.Elastic, Marbles.Color.Dark, 15);
 
             // Dummy wallets
             Wallet.Wallet wallet = new Wallet.Wallet(WalletHelper.GeneratePrivateKey());

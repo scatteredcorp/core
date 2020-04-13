@@ -21,7 +21,7 @@ namespace BGC.Contracts {
         public void Add(Marbles.Type type, Marbles.Color color, uint amount) {
             // Check if type is already in a placement
             for (byte i = 0; i < Marbles.Count; i++) {
-                if (Marbles[i].Type == type) {
+                if (Marbles[i].Type == type && Marbles[i].Color == color) {
                     // If it is, increase it
                     Marbles[i].Amount += amount;
                     return;
@@ -56,6 +56,7 @@ namespace BGC.Contracts {
             for (int i = 0; i < Marbles.Count; i++) {
                 Console.WriteLine("\tType: {0}", Marbles[i].Type);
                 Console.WriteLine("\tAmount: {0}", Marbles[i].Amount);
+                Console.WriteLine("\tColor: {0}", Marbles[i].Color);
                 Console.WriteLine("");
             }
         }
