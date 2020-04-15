@@ -195,9 +195,7 @@ namespace BGC.Contracts {
                 reward.Add(marbles[i].Type, Color.None, marbles[i].Quantity());   
             }
 
-            reward.PrettyPrint();
-
-            TransactionContract coinbase = new TransactionContract(empty,empty, reward, new byte[25], minerAddress);
+            TransactionContract coinbase = new TransactionContract(empty, reward, empty, new byte[25], minerAddress);
             return coinbase;
         }
     }

@@ -47,6 +47,8 @@ namespace BGC.Consensus {
 			BigInteger lastTarget = new BigInteger(Blockchain.Blockchain.LastTarget(), true);
 
 			decimal coef = ((decimal) (endTime - startTime)) / (decimal) expectedTime;
+			if(coef > (decimal) 1.5) coef = (decimal) 1.5;
+			if(coef < (decimal) 0.5) coef = (decimal) 0.5;
 
 			var f = Utils.Fraction(coef);
 			BigInteger bigTarget = lastTarget * f.numerator;

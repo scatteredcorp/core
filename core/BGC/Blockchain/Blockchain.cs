@@ -12,11 +12,78 @@ namespace BGC.Blockchain {
         public static uint Height { get; private set; }
         public static DB DB { get; private set; } = null;
 
-        public static void RedindexWorldState() {
-            
+        public static void RedindexWorldState(Block block) {
+            for(uint i = 0; i < block.Contracts.Length; i++) {
+                IContract contract = block.Contracts[i];
+
+                switch(contract.Type) {
+                    case (byte) Contracts.ContractType.TransactionContract: {
+                        TransactionContract tx = (TransactionContract) contract;
+                        ExchangeMarbles(tx);
+                        break;
+                    }
+
+                    case (byte) Contracts.ContractType.StartContract: {
+                        StartContract tx = (StartContract) contract;
+                        // Contract is a StartContract
+                        // This means we need put put the player's marbles in a lock space
+
+                        LockMarbles(tx.PlayerOnePubKeyHash, tx.PlayerOnePlacement);
+                        LockMarbles(tx.PlayerTwoPubKeyHash, tx.PlayerTwoPlacement);
+                        break;
+                    }
+                }
+            }
+
             return;
         }
+
+        private static void ExchangeMarbles(TransactionContract tx) {
+            byte[] rawPlayerOneInv = DB.Get(Utils.BuildKey("i", tx.PlayerOnePubKeyHash));
+            byte[] rawPlayerTwoInv = DB.Get(Utils.BuildKey("i", tx.PlayerTwoPubKeyHash));
+            Placement playerOneInv, playerTwoInv;
+
+            playerOneInv = rawPlayerOneInv != null ? ContractHelper.DeserializePlacement(rawPlayerOneInv) : new Placement();
+            playerTwoInv = rawPlayerTwoInv != null ? ContractHelper.DeserializePlacement(rawPlayerTwoInv) : new Placement();
+
+            for(int i = 0; i < tx.PlayerOnePlacement.Marbles.Count; i++) {
+                PlacementMarble marble = tx.PlayerOnePlacement.Marbles[i];
+
+                playerOneInv.Remove(marble.Type, marble.Color, marble.Amount);
+                playerTwoInv.Add(marble.Type, marble.Color, marble.Amount);
+            }
+
+            for(int i = 0; i < tx.PlayerTwoPlacement.Marbles.Count; i++) {
+                PlacementMarble marble = tx.PlayerTwoPlacement.Marbles[i];
+
+                playerTwoInv.Remove(marble.Type, marble.Color, marble.Amount);
+                playerOneInv.Add(marble.Type, marble.Color, marble.Amount);
+            }
+
+            // Write inventory for the two players
+            DB.Put(Utils.BuildKey("i", tx.PlayerOnePubKeyHash), playerOneInv.Serialize());
+            DB.Put(Utils.BuildKey("i", tx.PlayerTwoPubKeyHash), playerTwoInv.Serialize());
+        }
         
+        private static void LockMarbles(byte[] address, Placement marbles) {
+            byte[] data = DB.Get(Utils.BuildKey("i", address));
+            Placement inventory = ContractHelper.DeserializePlacement(data);
+
+            byte[] locked = DB.Get(Utils.BuildKey("il", address));
+            Placement lockedInventory = ContractHelper.DeserializePlacement(locked);
+
+            for(int j = 0; j < marbles.Marbles.Count; j++) {
+                PlacementMarble marble = marbles.Marbles[j];
+
+                inventory.Remove(marble.Type, marble.Color, marble.Amount);
+                lockedInventory.Add(marble.Type, marble.Color, marble.Amount);
+            }
+
+            DB.Put(Utils.BuildKey("i", address), inventory.Serialize());
+            DB.Put(Utils.BuildKey("il", address), lockedInventory.Serialize());
+        }
+
+
         public static byte[] LastTarget() {
 
             if (Height < Consensus.Consensus.TargetAdjustment) {
@@ -95,7 +162,7 @@ namespace BGC.Blockchain {
             
             // Increment height
             DB.Put(Utils.BuildKey("h"), BitConverter.GetBytes(Height));
-            Blockchain.RedindexWorldState();
+            Blockchain.RedindexWorldState(block);
             
             return true;
         }

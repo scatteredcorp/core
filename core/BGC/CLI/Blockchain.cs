@@ -74,6 +74,7 @@ namespace BGC.CLI {
 			var elapsedMs = watch.ElapsedMilliseconds;
 			Console.WriteLine("Elapsed: " + elapsedMs/1000 + " seconds");
 
+			byte[] message = Network.Utils.CreateMessage(Network.Message.COMMAND.SendBlock, block.Serialize());
 			StartMining(options);
 		}
 	}

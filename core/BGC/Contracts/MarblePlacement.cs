@@ -32,6 +32,17 @@ namespace BGC.Contracts {
             Marbles.Add(new PlacementMarble(type, color, amount));
         }
 
+        public void Remove(Marbles.Type type, Marbles.Color color, uint amount) {
+            // Check if type is already in a placement
+            for (byte i = 0; i < Marbles.Count; i++) {
+                if (Marbles[i].Type == type && Marbles[i].Color == color) {
+                    // If it is, increase it
+                    Marbles[i].Amount -= amount;
+                    return;
+                }
+            }
+        }
+
         public byte[] Serialize() {
             // Initialize byte list
             // Add number of marble types

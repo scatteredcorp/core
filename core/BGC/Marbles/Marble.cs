@@ -32,21 +32,23 @@ namespace BGC.Marbles {
 
     public static class Marbles {
         // Invididual definition
+        public static Marble Whirlwind = new Marble("Whirlwind", Type.Whirlwind, Rarity.VeryCommon);
         public static Marble Elastic   = new Marble("Elastic", Type.Elastic, Rarity.Common);
         public static Marble Layers    = new Marble("Layers", Type.Layers, Rarity.Uncommon);
         public static Marble Ribbon    = new Marble("Ribbon", Type.Ribbon, Rarity.Uncommon);
         public static Marble Stripes   = new Marble("Stripes", Type.Stripes, Rarity.Rare);
-        public static Marble Whirlwind = new Marble("Whirlwind", Type.Whirlwind, Rarity.VeryCommon);
+
         public static Marble Soccer    = new Marble("Soccer", Type.Soccer, Rarity.Legendary, true);
         
-
         // Define all marbles in an array
         public static Marble[] All = new Marble[]{
+            Whirlwind,
+
             Elastic,
             Layers,
             Ribbon,
             Stripes,
-            Whirlwind,
+            
             Soccer
         };
     }
@@ -73,7 +75,6 @@ namespace BGC.Marbles {
 
             uint height = Blockchain.Blockchain.Height;
             uint divide = (uint) Math.Pow(2, height / Consensus.Consensus.HalvingCycle); 
-            Console.WriteLine("Halving: {0}", divide);
 
             // Halve reward
             return InitialQuantity() / divide;
@@ -82,17 +83,17 @@ namespace BGC.Marbles {
         public uint InitialQuantity() {
             switch(Rarity) {
                 case Rarity.VeryCommon:
-                    return 100000000;   // 100M
+                    return 100;     // 100M
                 case Rarity.Common:
-                    return 10000000;    // 10M
+                    return 16;      // 10M
                 case Rarity.Uncommon:
-                    return 1000000;     // 1M
+                    return 8;       // 1M
                 case Rarity.Rare:
-                    return 100000;      // 100K
+                    return 4;       // 100K
                 case Rarity.ExtraRare:
-                    return 10000;       // 10K
+                    return 2;       // 10K
                 case Rarity.Legendary:
-                    return 1000;        // 1K
+                    return 1;       // 1K
 
                 default: 
                     throw new NotImplementedException();           

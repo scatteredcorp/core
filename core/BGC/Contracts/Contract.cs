@@ -28,7 +28,8 @@ namespace BGC.Contracts {
     public enum ContractType : byte {
         StartContract,
         ThrowContract,
-        TransactionContract
+        TransactionContract,
+        ClaimContract
     }
 
     public static class ContractHelper {
@@ -90,7 +91,7 @@ namespace BGC.Contracts {
             return contract.Sign(privateKey, nonce);
         }
 
-        private static Placement DeserializePlacement(byte[] contract, ref uint offset) {
+        public static Placement DeserializePlacement(byte[] contract, ref uint offset) {
             Placement placement = new Placement();
             byte numMarbles = contract[offset];
             offset++;
@@ -109,6 +110,11 @@ namespace BGC.Contracts {
             }
 
             return placement;
+        }
+
+        public static Placement DeserializePlacement(byte[] contract) {
+            uint k = 0;
+            return DeserializePlacement(contract, ref k);
         }
 
         private static byte[] DeserializeAddress(byte[] data, ref uint offset) {

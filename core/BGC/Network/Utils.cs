@@ -7,7 +7,7 @@ namespace BGC.Network
 {
     class Utils
     {
-        
+
         public static byte[] CreateMessage(Message.COMMAND command, byte[] payload, Message.MAGIC network = Message.MAGIC.TestNetwork) {
             byte[] r = new byte[Message.MessageStructureSize + payload.Length];
 
