@@ -1,9 +1,9 @@
 ﻿namespace BGC.Consensus {
     
     public class Consensus {
-        public const uint BlockTime         = 60; 			    // 60s
+        public const uint BlockTime         = 120; 			    // 2 mins
         public const uint TargetAdjustment  = 1440;             // every 1440 blocks adjust mining target
-        public const uint BlockSize         = 128  * 1024;    	// 128 KB
-        public const uint HalvingCycle      = 10000;            // every 10K blocks
+        public const uint BlockSize         = 256 * 1024;    	// 256 KB
+        public const uint HalvingCycle      = 5000;            // every 50K blocks
     }
 }
