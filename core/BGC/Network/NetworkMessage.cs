@@ -6,10 +6,10 @@ using System.Net;
 
 namespace BGC.Network
 {
-    class NetworkMessage
+    public class NetworkMessage
     {
-        Message.MAGIC magic { get; }
-        Message.COMMAND command { get; }
+        public Message.MAGIC magic { get; }
+        public Message.COMMAND command { get; }
         byte[] payload { get; }
         IPEndPoint endPoint { get; }
         bool isValid { get; }
