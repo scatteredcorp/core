@@ -28,6 +28,14 @@ namespace BGC.Network {
                     break;
                 case Message.COMMAND.SendContract:
                     break;
+                case Message.COMMAND.GetInventory:
+                    break;
+                case Message.COMMAND.SendInventory:
+                    break;
+                case Message.COMMAND.GetPublicKey:
+                    break;
+                case Message.COMMAND.SendPublicKey:
+                    break;
                 default:
                     break;
             }
