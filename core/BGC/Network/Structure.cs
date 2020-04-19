@@ -39,7 +39,15 @@ namespace BGC.Network
 
             GetContracts = 9,
 
-            TextMessage = 10
+            TextMessage = 10,
+
+            SendContract,
+
+            GetInventory,
+            SendInventory,
+
+            GetPublicKey,
+            SendPublicKey
         }
     }
 }
