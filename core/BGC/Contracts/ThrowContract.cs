@@ -31,6 +31,7 @@ namespace BGC.Contracts {
         public Placement Fee { get; }
         
         public byte X { get; }
+        public byte Y { get; }
         public byte Z { get; }
         
         public byte[] GameHash { get; }
@@ -39,11 +40,12 @@ namespace BGC.Contracts {
         public uint Nonce { get; private set; }
         public byte[] Signature { get; private set; }
 
-        public ThrowContract(Placement fee, byte[] gameHash, byte x, byte z, byte throwNonce, uint nonce = 0, byte[] signature = null) {
+        public ThrowContract(Placement fee, byte[] gameHash, byte x, byte y, byte z, byte throwNonce, uint nonce = 0, byte[] signature = null) {
 
             Fee = fee;
             
             X = x;
+            Y = y;
             Z = z;
 
             GameHash = gameHash;
@@ -65,6 +67,7 @@ namespace BGC.Contracts {
             Fee.PrettyPrint();
             
             Console.WriteLine("X: {0}", X);
+            Console.WriteLine("Y: {0}", Y);
             Console.WriteLine("Z: {0}", Z);
             
             Console.WriteLine("GameHash: {0}", Utils.ToHex(GameHash));
@@ -90,6 +93,7 @@ namespace BGC.Contracts {
             
             // Append throw vector
             serialized.Add(X);
+            serialized.Add(Y);
             serialized.Add(Z);
 
             // Append game hash (StartContract hash)

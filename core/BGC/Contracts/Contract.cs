@@ -29,7 +29,6 @@ namespace BGC.Contracts {
         StartContract,
         ThrowContract,
         TransactionContract,
-        ClaimContract
     }
 
     public static class ContractHelper {
@@ -208,6 +207,8 @@ namespace BGC.Contracts {
             
             byte x = data[offset];
             offset++;
+            byte y = data[offset];
+            offset++;
             byte z = data[offset];
             offset++;
 
@@ -219,11 +220,11 @@ namespace BGC.Contracts {
             
             if (offset == data.Length) {
                 // NoSig deserialization
-                return (new ThrowContract(fee, gameHash, x, z, throwNonce, nonce), offset);
+                return (new ThrowContract(fee, gameHash, x, y, z, throwNonce, nonce), offset);
             }
             byte[] signature = DeserializeSignature(data, ref offset);
             
-            return (new ThrowContract(fee, gameHash, x, z, throwNonce, nonce, signature), offset);
+            return (new ThrowContract(fee, gameHash, x, y, z, throwNonce, nonce, signature), offset);
         }
 
         private static (TransactionContract, uint) DeserializeTransactionContract(byte[] data, uint offset = 0) {
