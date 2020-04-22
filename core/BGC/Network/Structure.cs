@@ -47,7 +47,9 @@ namespace BGC.Network
             SendInventory,
 
             GetPublicKey,
-            SendPublicKey
+            SendPublicKey,
+            
+            RegisterNode
         }
     }
 }

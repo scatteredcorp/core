@@ -40,6 +40,9 @@ namespace BGC.Network {
                     break;
                 case Message.COMMAND.SendPublicKey:
                     break;
+                case Message.COMMAND.RegisterNode:
+                    Network.RegisterNode(message.Payload);
+                    break;
                 default:
                     break;
             }

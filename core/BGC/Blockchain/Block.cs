@@ -97,6 +97,7 @@ namespace BGC.Blockchain {
         }
 
         public bool Push() {
+            Network.Network.PropagateBlock(this);
             return Blockchain.PushBlock(this);
         }
 

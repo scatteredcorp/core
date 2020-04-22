@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using BGC.Consensus;
@@ -14,7 +15,7 @@ namespace BGC.Network
     {
         public static HashSet<IPEndPoint> nodes = LoadNodes(nodesFile);
 
-        private static string nodesFile { get; } = "nodes.txt";
+        private const string nodesFile = "nodes.txt";
         
         public enum ReturnCode
         {
@@ -61,7 +62,11 @@ namespace BGC.Network
 
             foreach (string line in File.ReadLines(fileName))
             {
-                nodes.Add(IPEndPoint.Parse(line));
+                try
+                {
+                    nodes.Add(IPEndPoint.Parse(line));
+                }
+                catch {}
             }
 
             return nodes;
@@ -85,6 +90,11 @@ namespace BGC.Network
                 return;
             nodes.Add(node);
             SaveNodes(nodes, nodesFile);
+        }
+
+        public static void RegisterNode(byte[] payload)
+        {
+            AddNode(IPEndPoint.Parse(Encoding.ASCII.GetString(payload)));
         }
 
         public static void PropagateBlock(Block block)
