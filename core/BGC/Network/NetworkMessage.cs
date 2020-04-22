@@ -10,7 +10,8 @@ namespace BGC.Network
     {
         public Message.MAGIC magic { get; }
         public Message.COMMAND command { get; }
-        byte[] payload { get; }
+        private byte[] payload;
+        public byte[] Payload => payload;
         IPEndPoint endPoint { get; }
         bool isValid { get; }
 

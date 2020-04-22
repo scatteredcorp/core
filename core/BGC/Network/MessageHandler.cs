@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 
 namespace BGC.Network {
     public static class MessageHandler {
         public static void Handle(NetworkMessage message, ref bool requestExit) {
+            Logger.Debug($"Handling message of type {message.command} on network {message.magic}");
             switch (message.command)
             {
                 case Message.COMMAND.GetBlock:
@@ -25,6 +28,7 @@ namespace BGC.Network {
                 case Message.COMMAND.GetContracts:
                     break;
                 case Message.COMMAND.TextMessage:
+                    Logger.Debug($"Text: {Encoding.ASCII.GetString(message.Payload)}");
                     break;
                 case Message.COMMAND.SendContract:
                     break;

@@ -108,13 +108,13 @@ namespace BGC.Network
 
                     payload.Add(buffer);
 
-                    Logger.Log("Received message: " + Encoding.Unicode.GetString(buffer, (int) Message.MessageStructureSize, recv), Logger.LoggingLevels.HighLogging);
+                    //Logger.Log("Received message: " + Encoding.Unicode.GetString(buffer, (int) Message.MessageStructureSize, recv), Logger.LoggingLevels.HighLogging);
 
                     while (recv < expectedSize)
                     {
                         recv = socket.Receive(buffer);
 
-                        Logger.Log("Received bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
+                        //Logger.Log("Received bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
 
                         payload.Add(buffer);
                     }
