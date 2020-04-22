@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using BGC.Consensus;
+using Block = BGC.Blockchain.Block;
 
 namespace BGC.Network {
     public static class MessageHandler {
@@ -12,7 +14,9 @@ namespace BGC.Network {
                 case Message.COMMAND.GetBlock:
                     break;
                 case Message.COMMAND.SendBlock:
-                    Logger.Debug($"Received block {(global::BGC.Utils.ToHex(Blockchain.Blockchain.DeserializeBlock(message.Payload).BlockHeader.Hash()))}");
+                    Block block = Blockchain.Blockchain.DeserializeBlock(message.Payload);
+                    Logger.Debug($"Received block {(global::BGC.Utils.ToHex(block.BlockHeader.Hash()))}");
+                    Blockchain.Blockchain.PushBlock(block);
                     break;
                 case Message.COMMAND.GetVersion:
                     break;

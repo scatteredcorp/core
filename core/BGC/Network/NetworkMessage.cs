@@ -38,7 +38,7 @@ namespace BGC.Network
             {
                 for (UInt32 i = Message.MessageStructureSize, j = 0; j < payloadSize; i++, j++)
                 {
-                    payload[j] = message[(int) i / 256][i % 256];
+                    payload[j] = message[(int) i / 1024][i % 1024];
                 }
                 isValid = true;
             }

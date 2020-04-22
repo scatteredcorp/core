@@ -99,7 +99,7 @@ namespace BGC.Network
                     
                     //Network.AddNode(socket.RemoteEndPoint as IPEndPoint);
 
-                    buffer = new byte[256];
+                    buffer = new byte[1024];
 
                     // Read first packet to know the expected size
 
@@ -114,7 +114,7 @@ namespace BGC.Network
 
                     while (recv < expectedSize)
                     {
-                        recv = socket.Receive(buffer);
+                        recv += socket.Receive(buffer);
 
                         //Logger.Log("Received bytes: " + Encoding.ASCII.GetString(buffer, 0, recv), Logger.LoggingLevels.HighLogging);
 
