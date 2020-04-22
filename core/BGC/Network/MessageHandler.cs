@@ -12,6 +12,7 @@ namespace BGC.Network {
                 case Message.COMMAND.GetBlock:
                     break;
                 case Message.COMMAND.SendBlock:
+                    Logger.Debug($"Received block {(global::BGC.Utils.ToHex(Blockchain.Blockchain.DeserializeBlock(message.Payload).BlockHeader.Hash()))}");
                     break;
                 case Message.COMMAND.GetVersion:
                     break;
