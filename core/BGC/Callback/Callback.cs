@@ -8,9 +8,9 @@ namespace BGC.Callback
     {
         public static bool exitRequested = false;
         
-        public static void Run()
+        public static void Run(int port, int maxClients)
         {
-            Listener listener = new Listener(54874, 1000);
+            Listener listener = new Listener(port, maxClients);
             
             listener.StartListening();
 

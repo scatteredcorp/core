@@ -26,8 +26,7 @@ namespace BGC.CLI {
 				throw new Exception("Max nodes required");
 			}
 			
-			Listener listener = new Listener(opts.Port, opts.Max);
-			listener.StartListening();
+			Callback.Callback.Run(opts.Port, opts.Max);
 		}
 
 		[Verb("send", HelpText = "Send data")]
