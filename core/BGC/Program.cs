@@ -9,5 +9,7 @@ namespace BGC {
         private static void Main(string[] args) {
             CLI.CLI.Run(args);
         }
+        
+        // Intercept SIGINT
     }
 }

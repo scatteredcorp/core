@@ -12,6 +12,8 @@ namespace BGC.Network
     {
         public Queue<NetworkMessage> IncomingQueue;
 
+        public Mutex QueueMutex;
+
         private Thread listenerThread;
 
         private bool keepListening;
@@ -116,7 +118,11 @@ namespace BGC.Network
 
                         payload.Add(buffer);
                     }
+
+                    QueueMutex.WaitOne();
                     IncomingQueue.Enqueue(new NetworkMessage(payload, socket.RemoteEndPoint as IPEndPoint));
+                    QueueMutex.ReleaseMutex();
+                    
                     tcpClient.Close();
 
                     Logger.Log("Done receiving data; connection closed.", Logger.LoggingLevels.HighLogging);

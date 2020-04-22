@@ -3,7 +3,7 @@ using System.Net;
 
 namespace BGC.Network {
     public static class MessageHandler {
-        public static void Handle(NetworkMessage message) {
+        public static void Handle(NetworkMessage message, ref bool requestExit) {
             switch (message.command)
             {
                 case Message.COMMAND.GetBlock:
