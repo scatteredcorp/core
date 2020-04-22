@@ -71,6 +71,17 @@ namespace BGC.Contracts {
                 Console.WriteLine("");
             }
         }
+
+        public int TotalValue()
+        {
+            int sum = 0;
+            foreach (PlacementMarble marble in Marbles)
+            {
+                sum += global::BGC.Marbles.Marbles.Value(marble.Type);
+            }
+
+            return sum;
+        }
     }
     
     

@@ -18,6 +18,8 @@ namespace BGC.Contracts {
         bool Sign(byte[] privateKey, uint nonce);
 
         void PrettyPrint();
+
+        Placement fee();
     }
 
     // Defines a contract with multiple signatures such as a Transaction or Start contract
