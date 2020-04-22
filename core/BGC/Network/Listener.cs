@@ -38,6 +38,8 @@ namespace BGC.Network
             this.port = port;
             this.maxClientsQueue = maxClientsQueue;
             updateInterval = serverUpdateInterval;
+            
+            QueueMutex = new Mutex();
         }
 
         public void StartListening()
