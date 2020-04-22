@@ -26,6 +26,7 @@ namespace BGC.CLI {
 				throw new Exception("Max nodes required");
 			}
 			
+			Blockchain.Blockchain.Resume();
 			Callback.Callback.Run(opts.Port, opts.Max);
 		}
 
