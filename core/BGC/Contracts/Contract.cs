@@ -19,7 +19,7 @@ namespace BGC.Contracts {
 
         void PrettyPrint();
 
-        Placement fee();
+        Placement Fee { get; }
     }
 
     // Defines a contract with multiple signatures such as a Transaction or Start contract

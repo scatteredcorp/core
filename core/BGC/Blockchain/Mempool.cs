@@ -21,7 +21,7 @@ namespace BGC.Blockchain {
         public static List<IContract> GetBestContracts(int count)
         {
             // Minus: decreasing order
-            Pool.Sort((contract, contract1) => - contract.fee().TotalValue().CompareTo(contract1.fee().TotalValue()));
+            Pool.Sort((contract, contract1) => - contract.Fee.TotalValue().CompareTo(contract1.Fee.TotalValue()));
 
             List<IContract> contracts = new List<IContract>();
 
