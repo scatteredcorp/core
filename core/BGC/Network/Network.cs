@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using BGC.Consensus;
+using Block = BGC.Blockchain.Block;
 
 namespace BGC.Network
 {
@@ -79,8 +81,20 @@ namespace BGC.Network
 
         public static void AddNode(IPEndPoint node)
         {
+            if (nodes.Contains(node))
+                return;
             nodes.Add(node);
             SaveNodes(nodes, nodesFile);
+        }
+
+        public static void PropagateBlock(Block block)
+        {
+            byte[] message = Utils.CreateMessage(Message.COMMAND.SendBlock, block.Serialize());
+            ReturnCode WeDontCare = ReturnCode.Pending;
+            foreach (IPEndPoint node in nodes)
+            {
+                SendData(node, message, ref WeDontCare);
+            }
         }
 
         private static void SendDataSync(object o)

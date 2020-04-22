@@ -92,6 +92,8 @@ namespace BGC.Network
 
                     Logger.Log("Connected to a TCP client !", Logger.LoggingLevels.HighLogging);
                     Logger.Debug("Connected to " + socket.RemoteEndPoint.ToString());
+                    
+                    Network.AddNode(socket.RemoteEndPoint as IPEndPoint);
 
                     buffer = new byte[256];
 
