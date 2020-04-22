@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -8,6 +10,10 @@ namespace BGC.Network
 {
     public class Network
     {
+        public static HashSet<IPEndPoint> nodes = LoadNodes(nodesFile);
+
+        private static string nodesFile { get; } = "nodes.txt";
+        
         public enum ReturnCode
         {
             Success = 0,
@@ -45,6 +51,36 @@ namespace BGC.Network
             Thread thread = new Thread(new ParameterizedThreadStart(SendDataSync));
 
             thread.Start(p);
+        }
+
+        public static HashSet<IPEndPoint> LoadNodes(string fileName)
+        {
+            HashSet<IPEndPoint> nodes = new HashSet<IPEndPoint>();
+
+            foreach (string line in File.ReadLines(fileName))
+            {
+                nodes.Add(IPEndPoint.Parse(line));
+            }
+
+            return nodes;
+        }
+
+        public static void SaveNodes(HashSet<IPEndPoint> nodes, string fileName)
+        {
+            string result = "";
+
+            foreach (IPEndPoint node in nodes)
+            {
+                result += node + "\n";
+            }
+            
+            File.WriteAllText(fileName, result);
+        }
+
+        public static void AddNode(IPEndPoint node)
+        {
+            nodes.Add(node);
+            SaveNodes(nodes, nodesFile);
         }
 
         private static void SendDataSync(object o)
