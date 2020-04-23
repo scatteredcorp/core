@@ -36,6 +36,7 @@ namespace BGC.Contracts {
         // Player One pays for fee
         public Placement Fee { get; }
         
+        
         public Placement PlayerOnePlacement { get; }
         public Placement PlayerTwoPlacement { get; }
 

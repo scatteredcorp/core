@@ -32,6 +32,29 @@ namespace BGC.Marbles {
         public static Marble Stripes   = new Marble("Stripes", Type.Stripes, 2);
         public static Marble Whirlwind = new Marble("Whirlwind", Type.Whirlwind, 1);
         public static Marble Soccer    = new Marble("Soccer", Type.Soccer, 1, true);
+
+        public static int Value(Type type)
+        {
+            switch (type)
+            {
+                case Type.Earth:
+                    return 39;
+                case Type.Elastic:
+                    return 69;
+                case Type.Layers:
+                    return 208;
+                case Type.Ribbon:
+                    return 208;
+                case Type.Stripes:
+                    return 833;
+                case Type.Whirlwind:
+                    return 1667;
+                case Type.Soccer:
+                    return 10000;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
         
         // Define all marbles in an array
         public static Marble[] All = new Marble[]{
