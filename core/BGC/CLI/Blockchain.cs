@@ -63,7 +63,7 @@ namespace BGC.CLI {
 
 			(uint nonce, byte[] hash) = pow.Run();
 			block.BlockHeader.Nonce = nonce;
-			Blockchain.Blockchain.PushBlock(block);
+			block.Push();
 
 			Console.WriteLine("Written block on the BGC network.");
 			Console.WriteLine(block.BlockHeader.HashString());
