@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using BGC.Consensus;
+using BGC.Network;
 using Block = BGC.Blockchain.Block;
 
 namespace BGC.Network {
     public static class MessageHandler {
+        private static Network.ReturnCode dummy;
         public static void Handle(NetworkMessage message, ref bool requestExit) {
             Logger.Debug($"Handling message of type {message.command} on network {message.magic}");
             switch (message.command)
@@ -47,6 +49,10 @@ namespace BGC.Network {
                     break;
                 case Message.COMMAND.RegisterNode:
                     Network.RegisterNode(message.Payload);
+                    break;
+                case Message.COMMAND.UnityGetInventory:
+                    Logger.Debug("Unity requested inventory. Sending back empty message.");
+                    Network.SendData(IPEndPoint.Parse("127.0.0.1:27496"), Utils.CreateMessage(Message.COMMAND.UnitySendInventory, new byte[1], Message.MAGIC.LocalNetwork), ref dummy);
                     break;
                 default:
                     break;
