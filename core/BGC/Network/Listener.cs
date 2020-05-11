@@ -99,7 +99,7 @@ namespace BGC.Network
                     
                     //Network.AddNode(socket.RemoteEndPoint as IPEndPoint);
 
-                    buffer = new byte[1024];
+                    buffer = new byte[2048];
 
                     // Read first packet to know the expected size
 

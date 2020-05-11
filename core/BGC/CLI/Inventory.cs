@@ -11,14 +11,9 @@ namespace BGC.CLI {
 		}
 		public static void GetInventory(InventoryOptions opts) {
 			Blockchain.Blockchain.Resume();
+			byte[] addr = Base58.Base58Encode.Decode(opts.Address);
 
-			byte[] pkhash = Base58.Base58Encode.Decode(opts.Address);
-			byte[] data = Blockchain.Blockchain.DB.Get(Utils.BuildKey("i", pkhash));
-			if(data == null) {
-				Console.WriteLine("Player doesn't exist.");
-				return;
-			}
-			Contracts.Placement inventory = Contracts.ContractHelper.DeserializePlacement(data);
+			Contracts.Placement inventory = Wallet.WalletHelper.GetInventory(addr);
 			inventory.PrettyPrint();
 		}
 	}

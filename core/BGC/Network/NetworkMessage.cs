@@ -23,7 +23,7 @@ namespace BGC.Network
             UInt32 payloadSize = BitConverter.ToUInt32(message[0],
                 sizeof(Message.MAGIC) + sizeof(Message.COMMAND));
 
-            payload = new byte[payloadSize + 1];
+            payload = new byte[payloadSize];
 
             // Read message type
             // WARNING: not flex

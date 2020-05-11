@@ -68,7 +68,7 @@ namespace BGC.Network
                 }
                 catch {}
             }
-
+            if(nodes == null) nodes = new HashSet<IPEndPoint>();
             return nodes;
         }
 

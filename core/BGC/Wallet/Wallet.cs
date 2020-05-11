@@ -87,6 +87,15 @@ namespace BGC.Wallet
         public static void DeleteWallet() {
             File.Delete(WalletPath);
         }
+
+        public static Contracts.Placement GetInventory(byte[] address) {
+			byte[] data = Blockchain.Blockchain.DB.Get(Utils.BuildKey("i", address));
+			if(data == null) {
+				Console.WriteLine("Player doesn't exist.");
+				return null;
+			}
+			return Contracts.ContractHelper.DeserializePlacement(data);
+        }
         
         public static byte[] GeneratePrivateKey() {
             using (var secp256k1 = new Secp256k1()) {
