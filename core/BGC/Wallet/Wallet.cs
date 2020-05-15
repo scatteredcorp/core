@@ -145,32 +145,32 @@ namespace BGC.Wallet
             // Step 1: Generate a private key
             byte[] privateKey = GeneratePrivateKey();
 
-            // Step 2: Initialize a wallet with that private key
+            // // Step 2: Initialize a wallet with that private key
             Wallet wallet = new Wallet(privateKey);
 
-            byte[] encrypted = Utils.EncryptBytes(privateKey, encryptionKey, new byte[16]);
+            // byte[] encrypted = Utils.EncryptBytes(privateKey, encryptionKey, new byte[16]);
             
-            File.WriteAllBytes(WalletPath, encrypted);
+            File.WriteAllBytes(WalletPath, privateKey);
 
             return wallet;
         }
 
-        public static Wallet LoadWallet(byte[] encryptionKey) {
+        public static Wallet LoadWallet() {
 
             if (!Exists()) {
                 throw new FileNotFoundException("wallet does not exist");
             }
             
             byte[] encrypted = File.ReadAllBytes(WalletPath);
-            byte[] decrypted;
-            try {
-                decrypted = Utils.DecryptBytes(encrypted, encryptionKey, new byte[16]);
-            }
-            catch {
-                throw new ArgumentException("Decryption key is invalid.");
-            }
+            // byte[] decrypted;
+            // try {
+            //     decrypted = Utils.DecryptBytes(encrypted, encryptionKey, new byte[16]);
+            // }
+            // catch {
+            //     throw new ArgumentException("Decryption key is invalid.");
+            // }
             
-            return new Wallet(decrypted);
+            return new Wallet(encrypted);
             
         }
     }

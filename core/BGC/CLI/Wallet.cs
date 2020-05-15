@@ -42,7 +42,7 @@ namespace BGC.CLI {
             }
             byte[] pass = Encoding.UTF8.GetBytes(opts.EncryptionKey);
 
-            Wallet.Wallet wallet = WalletHelper.LoadWallet(pass);
+            Wallet.Wallet wallet = WalletHelper.LoadWallet();
             Console.WriteLine(wallet.EncodedAddress());
         }
         

@@ -1,7 +1,7 @@
 ifeq ($(OS),Windows_NT)
-all : clean build test 
+all : clean build
 else
-all : clean secp256k1 build test
+all : clean secp256k1 build
 endif
 
 secp256k1:

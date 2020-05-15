@@ -59,6 +59,7 @@ namespace BGC.Network
         public static HashSet<IPEndPoint> LoadNodes(string fileName)
         {
             HashSet<IPEndPoint> nodes = new HashSet<IPEndPoint>();
+            if(!File.Exists(fileName)) return nodes;
 
             foreach (string line in File.ReadLines(fileName))
             {

@@ -1,10 +1,11 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2
-
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+RUN apt update 
+RUN apt install make autoconf cmake libtool -y
 COPY . /BGC
 
-WORKDIR /BGC/core/BGC
+WORKDIR /BGC
 
-RUN dotnet build --configuration Release -o /app
+RUN make
 
-ENTRYPOINT ["/usr/bin/dotnet", "/app/BGC.dll"]
+ENTRYPOINT ["/BGC/build/BGC"]
 CMD ["help"]

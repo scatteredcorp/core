@@ -21,7 +21,7 @@ namespace BGC.CLI {
 
 			byte[] pass = Utils.StringToBytes(opts.Password);
 
-			Wallet.Wallet wallet = WalletHelper.LoadWallet(pass);
+			Wallet.Wallet wallet = WalletHelper.LoadWallet();
 
 			// TODO change nonce dynamically
 			contract.Sign(wallet.PrivateKey, 1337);
