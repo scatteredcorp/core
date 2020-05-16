@@ -58,13 +58,21 @@ namespace BGC.Network {
                     Contracts.Placement inventory = Wallet.WalletHelper.GetInventory(message.Payload);
                     Network.SendData(IPEndPoint.Parse("127.0.0.1:27496"), Utils.CreateMessage(Message.COMMAND.UnitySendInventory, inventory.Serialize(), Message.MAGIC.LocalNetwork), ref dummy);
                     break;
-                case Message.COMMAND.UnityGetWallet:
+                case Message.COMMAND.UnityGetWallet: {
                     Logger.Debug("Unity requested wallet address. Sending...");
                 
                     Wallet.Wallet w = Wallet.WalletHelper.LoadWallet();
 
                     Network.SendData(IPEndPoint.Parse("127.0.0.1:27496"), Utils.CreateMessage(Message.COMMAND.UnitySendWallet, w.Address(), Message.MAGIC.LocalNetwork), ref dummy);
                     break;
+                }
+                case Message.COMMAND.UnityGetOwnInventory: {
+                    Wallet.Wallet w = Wallet.WalletHelper.LoadWallet();
+                    Contracts.Placement i = Wallet.WalletHelper.GetInventory(w.Address());
+                    Logger.Debug(w.EncodedAddress());
+                    Network.SendData(IPEndPoint.Parse("127.0.0.1:27496"), Utils.CreateMessage(Message.COMMAND.UnitySendOwnInventory, i.Serialize(), Message.MAGIC.LocalNetwork), ref dummy);
+                    break;
+                }
                 default:
                     break;
             }

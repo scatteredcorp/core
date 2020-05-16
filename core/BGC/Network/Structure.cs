@@ -55,7 +55,9 @@ namespace BGC.Network
             UnityGetInventory,
             UnitySendInventory,
             UnityGetWallet,
-            UnitySendWallet
+            UnitySendWallet,
+            UnityGetOwnInventory,
+            UnitySendOwnInventory
         }
     }
 }
