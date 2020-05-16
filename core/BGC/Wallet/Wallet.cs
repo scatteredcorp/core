@@ -89,12 +89,17 @@ namespace BGC.Wallet
         }
 
         public static Contracts.Placement GetInventory(byte[] address) {
-			byte[] data = Blockchain.Blockchain.DB.Get(Utils.BuildKey("i", address));
-			if(data == null) {
-				Console.WriteLine("Player doesn't exist.");
-				return null;
-			}
-			return Contracts.ContractHelper.DeserializePlacement(data);
+            try {
+                byte[] data = Blockchain.Blockchain.DB.Get(Utils.BuildKey("i", address));
+                if(data == null) {
+                    Console.WriteLine("Player doesn't exist.");
+                    return null;
+                }
+                return Contracts.ContractHelper.DeserializePlacement(data);
+            } catch {
+                return new Contracts.Placement();
+            }
+
         }
         
         public static byte[] GeneratePrivateKey() {
